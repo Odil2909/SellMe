@@ -1,0 +1,22 @@
+:root {
+  color-scheme: light;
+  --green: #087c55;
+  --green-dark: #075b40;
+  --green-soft: #e8f5ee;
+  --green-pale: #f1f8f3;
+  --ink: #202923;
+  --muted: #78847c;
+  --line: #e5ebe6;
+  --surface: #fff;
+  --canvas: #f6f8f6;
+  --gold: #b7853e;
+  --success: #16a36a;
+  --shadow-sm: 0 5px 18px rgba(25, 50, 36, .055);
+  --shadow-md: 0 18px 50px rgba(20, 48, 34, .11);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --page-width: 1240px;
+  --font: Inter, "Helvetica Neue", Arial, sans-serif;
+}

@@ -1,0 +1,7 @@
+body { font-family: var(--font); color: var(--ink); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { line-height: 1.12; letter-spacing: -.045em; font-weight: 650; }
+h1 { font-size: clamp(2.55rem, 5.2vw, 4.65rem); }
+h2 { font-size: clamp(1.8rem, 3vw, 2.7rem); }
+h3 { font-size: 1.2rem; }
+.eyebrow { color: var(--green); font-size: .72rem; text-transform: uppercase; letter-spacing: .13em; font-weight: 750; }
+.muted { color: var(--muted); }
