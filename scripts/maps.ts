@@ -41,14 +41,18 @@ const mapIconNames: Record<string, string> = {
   'Склад': 'building'
 };
 
-function markerIcon(category: string, approximate = false) {
+function markerIcon(category: string, price: number | string | undefined, approximate = false) {
   const iconName = mapIconNames[category] || 'building';
+  const amount = Number(price);
+  const priceLabel = Number.isFinite(amount) && amount > 0
+    ? new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(amount)
+    : '';
   return L.divIcon({
     className: 'property-map-icon',
-    html: `<span class="property-map-marker property-map-marker-${iconName}${approximate ? ' property-map-marker-approximate' : ''}">${icon(iconName, 19)}</span>`,
-    iconSize: [38, 44],
-    iconAnchor: [19, 40],
-    popupAnchor: [0, -37]
+    html: `<span class="property-map-marker-wrap">${priceLabel ? `<span class="property-map-price">$${priceLabel}</span>` : ''}<span class="property-map-marker property-map-marker-${iconName}${approximate ? ' property-map-marker-approximate' : ''}">${icon(iconName, 19)}</span></span>`,
+    iconSize: [100, 62],
+    iconAnchor: [50, 58],
+    popupAnchor: [0, -55]
   });
 }
 
@@ -101,7 +105,7 @@ export function mountPropertyMap(element: HTMLElement, listings: MapListing[]) {
   positionedListings.forEach(({ item, position, approximate }) => {
     bounds.push(position);
     if (approximate) approximateCount += 1;
-    const marker = L.marker(position, { icon: markerIcon(item.category || '', approximate) }).addTo(map);
+    const marker = L.marker(position, { icon: markerIcon(item.category || '', item.price, approximate) }).addTo(map);
     const popup = document.createElement('div');
     const title = document.createElement('strong');
     title.textContent = item.title || 'Объявление Makon';
@@ -157,12 +161,12 @@ export function mountLocationPicker(
     latField.value = position.lat.toFixed(6);
     lngField.value = position.lng.toFixed(6);
     if (marker) marker.setLatLng(position);
-    else marker = L.marker(position, { icon: markerIcon(category) }).addTo(map);
+    else marker = L.marker(position, { icon: markerIcon(category, undefined) }).addTo(map);
     form.dispatchEvent(new Event('input', { bubbles: true }));
   };
 
   if (initialLat && initialLng) {
-    marker = L.marker([Number(initialLat), Number(initialLng)], { icon: markerIcon(category) }).addTo(map);
+    marker = L.marker([Number(initialLat), Number(initialLng)], { icon: markerIcon(category, undefined) }).addTo(map);
   }
   map.on('click', event => selectLocation(event.latlng));
   requestAnimationFrame(() => map.invalidateSize());
@@ -172,6 +176,11 @@ export function mountLocationPicker(
       if (!latField.value && !lngField.value) {
         map.setView(cityCenters[city] || cityCenters['Ташкент'], 12);
       }
+    },
+    setLocation(lat: number, lng: number) {
+      const position = L.latLng(lat, lng);
+      selectLocation(position);
+      map.setView(position, 16);
     }
   };
 }

@@ -1,5 +1,5 @@
 import { icon } from './icons';
-import { imageView, listingCard, sectionTitle } from './ui';
+import { escapeHtml, imageView, listingCard, sectionTitle } from './ui';
 import type { Property } from './types';
 
 const categoryData = [
@@ -26,14 +26,14 @@ const offerCount = count => {
 };
 
 export function homePage(properties: Property[]) {
-  const hero = properties.find(item => item.id === 'mak-002') || properties[0];
-  const cards = properties.filter(item => ['mak-001','mak-002','mak-003','mak-004','mak-009','mak-015'].includes(item.id));
-  const recommendations = properties.filter(item => ['mak-010','mak-013','mak-022'].includes(item.id));
+  const hero = properties[0];
+  const cityCount = new Set(properties.map(item => item.city)).size;
+  const cards = properties.slice(0, 6);
   return `<section class="hero"><div class="container"><div class="hero-layout">
     <div class="hero-copy"><span class="hero-kicker">${icon('sparkle',15)} Недвижимость с умным подходом</span><h1>Найдите место,<br>которое станет <span>вашим.</span></h1><p>Покупайте, продавайте и арендуйте. Оценивайте недвижимость и находите свой вариант по-настоящему удобно.</p>
-    <div class="hero-stats"><div class="hero-stat"><strong>24+</strong><small>объекта в каталоге</small></div><div class="hero-stat"><strong>7 городов</strong><small>по всему Узбекистану</small></div><div class="hero-stat"><strong>Ваш выбор</strong><small>без лишней суеты</small></div></div>
-    </div><div class="hero-media"><div class="hero-main-image">${imageView(hero.photos[0],'Современный частный дом в окружении зелени')}<div class="hero-image-shade"></div><div class="hero-caption"><strong>${hero.title}</strong><span>${hero.city}, ${hero.district} · ${hero.area} м²</span></div></div>
-      <div class="hero-float rating"><div class="avatar">${icon('shield',19)}</div><div><b>Подбор с заботой</b><small>Проверенные объявления</small></div></div><div class="hero-float insight"><small>Средняя площадь в подборке</small><strong>от 42 м²</strong><small>для разных планов и бюджетов</small></div>
+    <div class="hero-stats"><div class="hero-stat"><strong>${properties.length}</strong><small>объявлений в каталоге</small></div><div class="hero-stat"><strong>${cityCount} городов</strong><small>по всему Узбекистану</small></div><div class="hero-stat"><strong>Ваш выбор</strong><small>без лишней суеты</small></div></div>
+    </div><div class="hero-media"><div class="hero-main-image">${hero?imageView(hero.photos?.[0]||'',hero.title):`<div class="property-image-placeholder">${icon('home',54)}<span>Здесь появятся объявления владельцев</span></div>`}<div class="hero-image-shade"></div>${hero?`<div class="hero-caption"><strong>${escapeHtml(hero.title)}</strong><span>${escapeHtml(hero.city)}, ${escapeHtml(hero.district)} · ${hero.area} м²</span></div>`:''}</div>
+      <div class="hero-float rating"><div class="avatar">${icon('shield',19)}</div><div><b>Подбор с заботой</b><small>Объявления владельцев</small></div></div><div class="hero-float insight"><small>Местоположение</small><strong>На интерактивной карте</strong><small>для каждого объявления</small></div>
     </div></div>
     <div class="hero-search"><form class="search-box" id="home-search"><div class="search-tabs" role="tablist"><button type="button" class="search-tab active" data-deal="Продажа">Купить</button><button type="button" class="search-tab" data-deal="Аренда">Арендовать</button><button type="button" class="search-tab" data-deal="Посуточно">Посуточно</button></div><input type="hidden" name="deal" value="Продажа"><div class="search-fields">
       <div class="field search-field-icon"><label for="home-city">Город</label>${icon('pin',16)}<input id="home-city" name="city" placeholder="Например, Ташкент" list="city-options"><datalist id="city-options">${['Ташкент','Самарканд','Бухара','Андижан','Наманган','Фергана','Нукус'].map(city=>`<option value="${city}">${city}</option>`).join('')}</datalist></div>
@@ -48,15 +48,11 @@ export function homePage(properties: Property[]) {
     <div class="category-grid">${categoryData.map(([name,key,img])=>{const count=properties.filter(item=>item.category===key).length;return `<a class="category-tile" href="./pages/catalog.html?category=${encodeURIComponent(key)}">${imageView(img,name)}<span>${name}<small>${offerCount(count)}</small></span></a>`;}).join('')}</div>
   </div></section>
 
-  <section class="section section-tint"><div class="container">${sectionTitle('Выбор Makon','Предложения, на которые стоит посмотреть','Разные города и сценарии — чтобы быстрее понять, что вам подходит.')}
-    <div class="card-grid">${cards.map(item=>listingCard(item)).join('')}</div><div style="text-align:center;margin-top:27px"><a class="btn btn-quiet" href="./pages/catalog.html">Смотреть каталог ${icon('arrow',16)}</a></div>
+  <section class="section section-tint"><div class="container">${sectionTitle('Объявления владельцев','Найдите свой следующий адрес.','Актуальные объекты, добавленные пользователями Makon.')}
+    ${cards.length?`<div class="card-grid">${cards.map(item=>listingCard(item)).join('')}</div>`:`<div class="empty-state"><div class="empty-icon">${icon('home',28)}</div><h3>Пока нет объявлений</h3><p>Разместите первое объявление — оно появится в общем каталоге.</p><a class="btn btn-primary" href="./pages/create-listing.html">Разместить объявление</a></div>`}<div style="text-align:center;margin-top:27px"><a class="btn btn-quiet" href="./pages/catalog.html">Смотреть каталог ${icon('arrow',16)}</a></div>
   </div></section>
 
-    <section class="section"><div class="container"><div class="ai-banner"><div class="ai-banner-copy"><span class="eyebrow">Makon estimate</span><h2>Узнайте, сколько может стоить ваша недвижимость.</h2><p>Ориентир по стоимости на основе параметров объекта и демонстрационных данных рынка.</p><a class="btn btn-light" href="./pages/valuation.html">Оценить объект ${icon('arrow',16)}</a></div><div class="ai-banner-art">${imageView('assets/images/property-contact-sheet.jpg#tile-4','Фасад современного дома')}</div></div></div></section>
-
-  <section class="section section-tint"><div class="container">${sectionTitle('Подборка дня','Варианты для новых планов','Несколько интересных объектов в разных городах Узбекистана.')}
-    <div class="card-grid">${recommendations.map(item=>listingCard(item)).join('')}</div><div style="margin-top:25px"><a class="btn btn-quiet" href="./pages/ai-search.html">Собрать свой подбор ${icon('sparkle',16)}</a></div>
-  </div></section>
+  <section class="section"><div class="container"><div class="ai-banner"><div class="ai-banner-copy"><span class="eyebrow">Makon estimate</span><h2>Узнайте, сколько может стоить ваша недвижимость.</h2><p>Ориентировочная стоимость по характеристикам объекта.</p><a class="btn btn-light" href="./pages/valuation.html">Оценить объект ${icon('arrow',16)}</a></div><div class="ai-banner-art">${imageView('assets/images/property-contact-sheet.jpg#tile-4','Фасад современного дома')}</div></div></div></section>
 
   <section class="section"><div class="container">${sectionTitle('Города Узбекистана','Где бы вы хотели жить?','Выбирайте привычный темп или откройте для себя новый город.')}
     <div class="city-grid">${cities.map(([name,note,img])=>`<a class="city-tile" href="./pages/catalog.html?city=${encodeURIComponent(name)}">${imageView(img,name)}<div><strong>${name}</strong><small>${note}</small></div></a>`).join('')}</div>

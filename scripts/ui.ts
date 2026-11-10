@@ -2,6 +2,15 @@ import { icon } from './icons';
 import { readStore } from './store';
 import type { Property } from './types';
 
+const contactSheetUrl = new URL('../assets/images/property-contact-sheet.jpg', import.meta.url).href;
+const brandLogoUrl = new URL('../logo/logo.png', import.meta.url).href;
+export const escapeHtml = (value: unknown) => String(value ?? '')
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#39;');
+
 export const money = (amount: number, {compact = false}: {compact?: boolean} = {}) => new Intl.NumberFormat('en-US', {
   style: 'currency', currency: 'USD', maximumFractionDigits: 0,
   notation: compact ? 'compact' : 'standard'
@@ -16,15 +25,23 @@ export function imageView(src: string, alt: string, className = '') {
     const root = document.body.dataset.page === 'home' ? './' : '../';
     const col = tile % 6, row = Math.floor(tile / 6);
     const x = col * 20, y = row * (100 / 3);
-    const path = `${root}assets/images/property-contact-sheet.jpg`;
-    return `<span class="property-image-crop ${className}" role="img" aria-label="${alt}" style="background-image:url('${path}');background-position:${x}% ${y}%"></span>`;
+    const path = contactSheetUrl || `${root}assets/images/property-contact-sheet.jpg`;
+    return `<span class="property-image-crop ${className}" role="img" aria-label="${escapeHtml(alt)}" style="background-image:url('${escapeHtml(path)}');background-position:${x}% ${y}%"></span>`;
   }
-  return `<img class="${className}" src="${src}" alt="${alt}">`;
+  if (!src) return `<span class="property-image-placeholder ${className}" role="img" aria-label="${escapeHtml(alt)}">${icon('home',34)}</span>`;
+  const safeSource = escapeHtml(src);
+  const safeAlt = escapeHtml(alt);
+  if (/\.(?:mp4|mov|webm)(?:[?#]|$)/i.test(src)) {
+    const isDetailPage = document.body.dataset.page === 'property';
+    const playback = isDetailPage ? 'controls' : 'autoplay loop';
+    return `<video class="${className}" src="${safeSource}" aria-label="${safeAlt}" muted playsinline ${playback} preload="metadata"></video>`;
+  }
+  return `<img class="${className}" src="${safeSource}" alt="${safeAlt}" loading="lazy" decoding="async">`;
 }
 
 export function brand({footer = false}: {footer?: boolean} = {}) {
   const root = document.body.dataset.page === 'home' ? './' : '../';
-  return `<a class="brand ${footer ? 'footer-brand-mark' : ''}" href="${root}index.html" aria-label="Makon — главная"><img src="${root}assets/icons/makon-mark.svg" alt=""><span>Makon<em>.</em></span></a>`;
+  return `<a class="brand ${footer ? 'footer-brand-mark' : ''}" href="${root}index.html" aria-label="Makon — главная"><img src="${brandLogoUrl}" alt=""><span>Makon<em>.</em></span></a>`;
 }
 
 export function header(page: string, locale = 'ru') {
@@ -67,10 +84,12 @@ export function listingCard(item: Property, {compare = true}: {compare?: boolean
   const compared = readStore('compare', []);
   const image = item.photos?.[0] || '';
   const propertyHref = document.body.dataset.page === 'home' ? './pages/property.html' : './property.html';
-  return `<article class="property-card fade-up" data-property-card="${item.id}">
-    <div class="property-photo"><a href="${propertyHref}?id=${encodeURIComponent(item.id)}" aria-label="Открыть: ${item.title}">${imageView(image,item.title,'')}</a><span class="photo-label pill">${item.status || 'Объявление'}</span>
-      <button class="favorite-btn ${favorites.includes(item.id) ? 'is-saved' : ''}" data-action="favorite" data-id="${item.id}" aria-label="${favorites.includes(item.id) ? 'Убрать из избранного' : 'В избранное'}">${icon('heart',19)}</button></div>
-    <div class="property-info"><div class="property-type">${item.deal} · ${item.category}</div><a href="${propertyHref}?id=${encodeURIComponent(item.id)}"><h3 class="property-title">${item.title}</h3></a><div class="property-location">${icon('pin',15)} ${item.city}, ${item.district}</div>
+  const id = escapeHtml(item.id);
+  const href = `${propertyHref}?id=${encodeURIComponent(item.id)}`;
+  return `<article class="property-card fade-up" data-property-card="${id}">
+    <div class="property-photo"><a href="${href}" aria-label="Открыть: ${escapeHtml(item.title)}">${imageView(image,item.title,'')}</a><span class="photo-label pill">${escapeHtml(item.status || 'Объявление')}</span>
+      <button class="favorite-btn ${favorites.includes(item.id) ? 'is-saved' : ''}" data-action="favorite" data-id="${id}" aria-label="${favorites.includes(item.id) ? 'Убрать из избранного' : 'В избранное'}">${icon('heart',19)}</button></div>
+    <div class="property-info"><div class="property-type">${escapeHtml(item.deal)} · ${escapeHtml(item.category)}</div><a href="${href}"><h3 class="property-title">${escapeHtml(item.title)}</h3></a><div class="property-location">${icon('pin',15)} ${escapeHtml(item.city)}, ${escapeHtml(item.district)}</div>
       <div class="property-meta">${item.rooms ? `<span>${icon('bed',15)} ${item.rooms} комн.</span>` : ''}<span>${icon('area',15)} ${item.area} м²</span><span>${money(Math.round(item.price / item.area))}/м²</span></div>
       <div class="property-bottom"><div><div class="property-price">${priceLabel(item)}</div></div>${compare ? `<button class="compare-toggle ${compared.includes(item.id) ? 'active' : ''}" data-action="compare" data-id="${item.id}" aria-label="Добавить в сравнение">${icon('compare',17)}</button>` : ''}</div>
     </div></article>`;

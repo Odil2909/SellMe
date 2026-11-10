@@ -1,7 +1,6 @@
 import { icon } from './icons';
-import { listingCard, money } from './ui';
-import { mountPropertyMap, type MapListing } from './maps';
-import { readStore } from './store';
+import { escapeHtml, listingCard, money } from './ui';
+import { mountPropertyMap } from './maps';
 import type { Property } from './types';
 import type { Map as LeafletMap } from 'leaflet';
 
@@ -15,7 +14,7 @@ export function catalogPage(properties: Property[]) {
   <div class="catalog-layout"><aside class="filters-panel"><div class="inline" style="justify-content:space-between"><h3>Фильтры</h3><button class="btn btn-ghost btn-small" type="button" id="clear-filters">Сбросить</button></div>
     <div class="filter-group"><h4>Тип сделки</h4><select class="input" id="filter-deal"><option value="">Любой</option>${['Продажа','Аренда','Посуточно'].map(x=>`<option value="${x}">${x}</option>`).join('')}</select></div>
     <div class="filter-group"><h4>Недвижимость</h4><select class="input" id="filter-category"><option value="">Любой тип</option>${typeOptions.map(x=>`<option value="${x}">${x}</option>`).join('')}</select></div>
-    <div class="filter-group"><h4>Местоположение</h4><select class="input" id="filter-city"><option value="">Все города</option>${cities.map(x=>`<option value="${x}">${x}</option>`).join('')}<option value="Другие города">Другие города</option></select><div class="field" style="margin-top:9px"><input id="filter-district" placeholder="Район"></div></div>
+    <div class="filter-group"><h4>Местоположение</h4><select class="input" id="filter-city"><option value="">Все города</option>${cities.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('')}<option value="Другие города">Другие города</option></select><div class="field" style="margin-top:9px"><input id="filter-district" placeholder="Район"></div></div>
     <div class="filter-group"><h4>Цена, $</h4><div class="form-grid"><input class="input" id="filter-min" type="number" placeholder="От"><input class="input" id="filter-max" type="number" placeholder="До"></div></div>
     <div class="filter-group"><h4>Площадь, м²</h4><div class="form-grid"><input class="input" id="filter-area-min" type="number" placeholder="От"><input class="input" id="filter-area-max" type="number" placeholder="До"></div></div>
     <div class="filter-group" id="rooms-filter"><h4>Комнаты</h4><select class="input" id="filter-rooms"><option value="">Любое количество</option><option value="1">1 комната</option><option value="2">2 комнаты</option><option value="3">3 комнаты</option><option value="4">4 и более</option></select></div>
@@ -66,38 +65,14 @@ export function bindCatalog(properties: Property[]) {
     if (sort === 'price-asc') result.sort((a,b)=>a.price-b.price);
     if (sort === 'price-desc') result.sort((a,b)=>b.price-a.price);
     if (sort === 'newest') result.sort((a,b)=>b.date.localeCompare(a.date));
-    const localListings = readStore<MapListing[]>('listings', []);
-    const localMapResult = currentView === 'map' ? localListings.filter(item => {
-      const price = Number(item.price) || 0;
-      const area = Number(item.area) || 0;
-      const rooms = Number(item.rooms) || 0;
-      const floor = Number(item.floor) || 0;
-      const floors = Number(item.floors) || 0;
-      const city = val('filter-city');
-      if (val('filter-deal') && item.deal !== val('filter-deal')) return false;
-      if (category && item.category !== category) return false;
-      if (city && item.city !== city && !(city === 'Другие города' && !cityOptions.includes(item.city || ''))) return false;
-      if (val('filter-district') && !(item.district || '').toLowerCase().includes(val('filter-district').toLowerCase())) return false;
-      if (val('filter-min') && price < Number(val('filter-min'))) return false;
-      if (val('filter-max') && price > Number(val('filter-max'))) return false;
-      if (val('filter-area-min') && area < Number(val('filter-area-min'))) return false;
-      if (val('filter-area-max') && area > Number(val('filter-area-max'))) return false;
-      if (val('filter-rooms') && (!rooms || (val('filter-rooms') === '4' ? rooms < 4 : rooms !== Number(val('filter-rooms'))))) return false;
-      if (val('filter-condition') && !(item.condition || '').includes(val('filter-condition'))) return false;
-      if (val('filter-floor') === 'first' && floor === 1) return false;
-      if (val('filter-floor') === 'last' && floor && floors && floor === floors) return false;
-      if ((document.getElementById('filter-verified') as HTMLInputElement).checked && item.status !== 'Проверено') return false;
-      const query = val('catalog-query').trim().toLowerCase();
-      return !query || `${item.title || ''} ${item.city || ''} ${item.district || ''} ${item.category || ''} ${item.description || ''}`.toLowerCase().includes(query);
-    }) : [];
-    const visibleCount = result.length + localMapResult.length;
+    const visibleCount = result.length;
     document.getElementById('result-count')!.textContent = `${visibleCount} ${visibleCount === 1 ? 'объект' : 'объектов'}`;
     activeMap?.remove();
     activeMap = undefined;
-    if (!result.length && !localMapResult.length) { container.innerHTML = `<div class="empty-state"><div class="empty-icon">${icon('search',28)}</div><h3>По этим параметрам пока нет вариантов</h3><p>Измените пару условий — возможно, подходящий объект совсем рядом.</p><button class="btn btn-quiet" id="empty-reset">Сбросить фильтры</button></div>`; return; }
+    if (!result.length) { container.innerHTML = `<div class="empty-state"><div class="empty-icon">${icon('search',28)}</div><h3>Пока нет объявлений</h3><p>Разместите объявление или измените фильтры.</p><button class="btn btn-quiet" id="empty-reset">Сбросить фильтры</button></div>`; return; }
     if (currentView === 'map') {
       container.innerHTML = '<div id="catalog-property-map" class="map-canvas" aria-label="Объявления на карте OpenStreetMap"></div><p class="muted map-note" id="catalog-map-note"></p>';
-      const mapResult = mountPropertyMap(container.querySelector<HTMLElement>('#catalog-property-map')!, [...result, ...localMapResult]);
+      const mapResult = mountPropertyMap(container.querySelector<HTMLElement>('#catalog-property-map')!, result);
       activeMap = mapResult.map;
       if (!mapResult.markerCount) {
         container.querySelector('#catalog-map-note')!.textContent = 'Для этих городов пока нет координат, поэтому отметки не показаны.';
