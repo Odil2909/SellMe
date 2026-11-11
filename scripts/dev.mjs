@@ -1,11 +1,28 @@
 import { spawn } from 'node:child_process';
+import { createServer } from 'node:net';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
+const portProbe = createServer();
+const apiPort = await new Promise((resolvePort, reject) => {
+  portProbe.once('error', reject);
+  portProbe.listen(0, '127.0.0.1', () => {
+    const { port } = portProbe.address();
+    portProbe.close(error => error ? reject(error) : resolvePort(port));
+  });
+});
 const children = [
-  spawn(process.execPath, ['server/index.mjs'], { cwd: root, stdio: 'inherit' }),
-  spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1'], { cwd: root, stdio: 'inherit' })
+  spawn(process.execPath, ['server/index.mjs'], {
+    cwd: root,
+    stdio: 'inherit',
+    env: { ...process.env, PORT: String(apiPort) }
+  }),
+  spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1'], {
+    cwd: root,
+    stdio: 'inherit',
+    env: { ...process.env, VITE_API_PROXY_TARGET: `http://127.0.0.1:${apiPort}` }
+  })
 ];
 let shuttingDown = false;
 

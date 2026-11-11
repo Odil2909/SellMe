@@ -3,12 +3,13 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
 const projectRoot = fileURLToPath(new URL('.', import.meta.url));
+const apiTarget = process.env.VITE_API_PROXY_TARGET || 'http://127.0.0.1:4178';
 
 export default defineConfig({
   server: {
     proxy: {
-      '/api': 'http://127.0.0.1:4178',
-      '/uploads': 'http://127.0.0.1:4178'
+      '/api': apiTarget,
+      '/uploads': apiTarget
     }
   },
   build: {

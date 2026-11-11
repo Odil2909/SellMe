@@ -172,7 +172,7 @@ function App() {
   if (error) {
     return <main className="container section"><div className="empty-state">
       <h2>Не удалось открыть объявления</h2>
-      <p>Запустите проект через локальный веб-сервер, чтобы загрузить JSON-данные.</p>
+      <p>Запустите <code>npm run dev</code> из папки проекта и откройте адрес Vite, указанный в терминале. API каталога запускается вместе с ним.</p>
       <code>{error}</code>
     </div></main>;
   }
