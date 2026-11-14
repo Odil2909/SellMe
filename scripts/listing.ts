@@ -82,11 +82,19 @@ export function bindListing() {
       if(step===8){
         const button=document.getElementById('listing-next') as HTMLButtonElement;
         button.disabled=true;
-        const payload=new FormData();
-        payload.append('listing',JSON.stringify(data));
-        mediaFiles.forEach(file=>payload.append('media',file,file.name));
         try{
-          const response=await fetch('/api/listings',{method:'POST',body:payload});
+          let response: Response;
+          if(__VERCEL__){
+            const extensions:Record<string,string>={'image/png':'.png','image/jpeg':'.jpg','image/webp':'.webp','image/gif':'.gif','video/mp4':'.mp4','video/quicktime':'.mov','video/webm':'.webm'};
+            const {upload}=await import('@vercel/blob/client');
+            const uploads=await Promise.all(mediaFiles.map(file=>upload(`listing-media/${crypto.randomUUID()}${extensions[file.type]}`,file,{access:'public',handleUploadUrl:'/api/upload-token'})));
+            response=await fetch('/api/listings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,photos:uploads.map(file=>file.url)})});
+          }else{
+            const payload=new FormData();
+            payload.append('listing',JSON.stringify(data));
+            mediaFiles.forEach(file=>payload.append('media',file,file.name));
+            response=await fetch('/api/listings',{method:'POST',body:payload});
+          }
           const result=await response.json() as {id?:string;date?:string;photos?:string[];error?:string};
           if(!response.ok){toast(result.error||'Не удалось опубликовать объявление.');button.disabled=false;return;}
           const previous=readStore<Record<string,unknown>[]>('listings',[]);

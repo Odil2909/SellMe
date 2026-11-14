@@ -1,6 +1,6 @@
 # Makon — недвижимость по-новому
 
-Premium green real estate marketplace for Uzbekistan. The frontend is built with React, TypeScript, and CSS; a built-in Node.js API stores shared listings and uploaded media on disk.
+Premium green real estate marketplace for Uzbekistan. The frontend is built with React, TypeScript, and CSS. Local development uses a built-in Node.js API; Vercel deployments use Vercel Functions, Neon Postgres, and Vercel Blob.
 
 ## Start locally
 
@@ -11,7 +11,20 @@ npm install
 npm run dev
 ```
 
-Create and run a production build with `npm run build` and `npm start`. The server requires Node.js 20 or newer. Set `PORT` to change the listening port and `DATA_DIR` to place persistent listing data and uploads on a mounted disk.
+Create and run a production build with `npm run build` and `npm start`. Local server commands require Node.js 20 or newer. Set `PORT` to change the listening port and `DATA_DIR` to place local listing data and uploads on a mounted disk.
+
+## Deploy to Vercel
+
+`vercel.json` configures the Vite build and `dist` output. The `api/` directory contains Vercel Functions, so `/api/listings`, `/api/geocode`, and `/api/upload-token` work on both the default Vercel URL and a custom domain.
+
+Before deploying:
+
+1. Enable Vercel system environment variables; the build uses `VERCEL=1` to select the serverless upload flow.
+2. Connect a Neon project to Vercel and set `DATABASE_URL` for Production, Preview, and Development. Use the pooled connection string for serverless requests.
+3. Create and connect a **public** Vercel Blob store. Add `BLOB_READ_WRITE_TOKEN` to the project so the upload-token function can authorize direct browser uploads. The token must have read/write access.
+4. Deploy or redeploy. The listings table is created automatically on the first API request; its schema is also documented in `db/migrations/001_create_listings.sql`.
+
+The local Vite development server continues to use the JSON-file API in `server/`; Vercel production uses Neon and Blob. Listing submission remains anonymous, as before.
 
 ## Brand
 
@@ -58,8 +71,17 @@ scripts/
   types.ts
   ui.ts
   valuation.ts
+api/
+  database.mjs
+  geocode.mjs
+  listings.mjs
+  upload-token.mjs
 server/
   index.mjs
+  listing-validation.mjs
+db/
+  migrations/001_create_listings.sql
+vercel.json
 logo/logo.png
 package.json
 tsconfig.json
@@ -91,11 +113,11 @@ styles/
 
 ## Demo data and images
 
-`data/properties.json` is empty and no sample listings are preloaded. Visitor-submitted listings are saved by the Node API to `server-data/listings.json`, and their media is saved in `server-data/uploads/`; both are ignored by Git. The optimized local image sheet is an original generated visual with 24 different property scenes; cards and galleries crop individual cells with CSS.
+`data/properties.json` is empty and no sample listings are preloaded. During local development, visitor-submitted listings and media are stored in the ignored `server-data/` directory. On Vercel, listings are stored in Neon and media in Vercel Blob. The optimized local image sheet is an original generated visual with 24 different property scenes; cards and galleries crop individual cells with CSS.
 
-Favorites, comparison, valuation history, profile, settings, and listing drafts use browser `localStorage`. Published listings and their media are stored by the Node API in `DATA_DIR` and shared with site visitors. Up to 10 media files can be attached to a listing; each video is limited to 10 MB and each photo to 15 MB.
+Favorites, comparison, valuation history, profile, settings, and listing drafts use browser `localStorage`. Up to 10 media files can be attached to a listing; each video is limited to 10 MB and each photo to 15 MB.
 
-Address lookup is requested explicitly by the listing author and sends the entered address to OpenStreetMap's Nominatim service. Map tiles are provided by OpenStreetMap. AI search, valuation, messages, and legal links remain front-end demonstrations. User sign-in/authentication is not connected; publishing is currently anonymous and rate-limited. The JSON-file API is intended for a single Node server with a persistent disk; multiple server instances require shared database and media storage.
+Address lookup is requested explicitly by the listing author and sends the entered address to OpenStreetMap's Nominatim service. Map tiles are provided by OpenStreetMap. AI search, valuation, messages, and legal links remain front-end demonstrations. User sign-in/authentication is not connected; publishing is currently anonymous and rate-limited.
 
 ## React + TypeScript
 

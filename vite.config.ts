@@ -6,6 +6,9 @@ const projectRoot = fileURLToPath(new URL('.', import.meta.url));
 const apiTarget = process.env.VITE_API_PROXY_TARGET || 'http://127.0.0.1:4178';
 
 export default defineConfig({
+  define: {
+    __VERCEL__: JSON.stringify(process.env.VERCEL === '1')
+  },
   server: {
     proxy: {
       '/api': apiTarget,
