@@ -43,7 +43,7 @@ export default async function handler(request, response) {
     search.searchParams.set('limit', '1');
     search.searchParams.set('countrycodes', 'uz');
     const result = await fetch(search, {
-      headers: { 'User-Agent': 'MakonPropertySearch/1.0', 'Accept-Language': 'ru,en' },
+      headers: { 'User-Agent': 'uy-ol-property-search/1.0', 'Accept-Language': 'ru,en' },
       signal: AbortSignal.timeout(8000)
     });
     if (!result.ok) {

@@ -3,13 +3,13 @@ import { toast } from './ui';
 
 export function authPage() {
   return `<div class="container"><section class="auth-card">
-    <header class="page-heading" style="padding-bottom:0"><span class="eyebrow">Makon</span><h1 id="auth-title">Вход в аккаунт</h1><p>Войдите, чтобы пользоваться личным кабинетом и своими объявлениями.</p></header>
+    <header class="page-heading" style="padding-bottom:0"><span class="eyebrow">uy-ol</span><h1 id="auth-title">Вход в аккаунт</h1><p>Войдите, чтобы пользоваться личным кабинетом и своими объявлениями.</p></header>
     <form class="form-card" id="auth-form" novalidate>
       <div class="field"><label for="auth-phone">Номер телефона</label><input id="auth-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="18" placeholder="+998 90 123 45 67" required></div>
       <div class="field" style="margin-top:16px"><label for="auth-password">Пароль</label><input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="8" required placeholder="Не менее 8 символов"></div>
       <div class="field" id="auth-password-confirm-field" style="margin-top:16px" hidden><label for="auth-password-confirm">Повторите пароль</label><input id="auth-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="8"></div>
       <button class="btn btn-primary btn-block" id="auth-submit" type="submit" style="margin-top:20px">Войти</button>
-      <div class="auth-links"><span id="auth-switch-prompt">Впервые на Makon?</span> <button type="button" id="auth-switch">Создать аккаунт</button></div>
+      <div class="auth-links"><span id="auth-switch-prompt">Впервые на uy-ol?</span> <button type="button" id="auth-switch">Создать аккаунт</button></div>
       <div class="notice auth-warning">Демонстрационная форма: номер проверяется по формату, но SMS-код и настоящая авторизация не подключены. Не вводите настоящий пароль — он не сохраняется.</div>
     </form>
   </section></div>`;
@@ -47,7 +47,7 @@ export function bindAuth() {
     validatePasswords();
     title.textContent = registering ? 'Создать аккаунт' : 'Вход в аккаунт';
     submit.textContent = registering ? 'Зарегистрироваться' : 'Войти';
-    switchPrompt.textContent = registering ? 'Уже есть аккаунт?' : 'Впервые на Makon?';
+    switchPrompt.textContent = registering ? 'Уже есть аккаунт?' : 'Впервые на uy-ol?';
     switchButton.textContent = registering ? 'Войти' : 'Создать аккаунт';
   });
   form.addEventListener('submit', event => {

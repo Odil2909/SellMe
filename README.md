@@ -1,4 +1,4 @@
-# Makon — недвижимость по-новому
+# uy-ol — недвижимость по-новому
 
 Premium green real estate marketplace for Uzbekistan. The frontend is built with React, TypeScript, and CSS. Local development uses a built-in Node.js API; Vercel deployments use Vercel Functions, Neon Postgres, and Vercel Blob.
 
@@ -28,9 +28,9 @@ The local Vite development server continues to use the JSON-file API in `server/
 
 ## Brand
 
-Name ideas considered: **Makon**, **Nesto**, **Uya**, **Livora**, and **Domio**. **Makon** is the selected working name: a short Uzbek word associated with a place or space, used here as an independent product brand.
+The product brand is **uy-ol**.
 
-The visual system uses Makon green (`#087C55`), dark green (`#075B40`), soft green surfaces, Inter with a sans-serif fallback, rounded cards, fine borders, and restrained motion. The brand icon is in `assets/icons/makon-mark.svg`; the site logo and favicon use `logo/logo.png`.
+The visual system uses uy-ol green (`#087C55`), dark green (`#075B40`), soft green surfaces, Inter with a sans-serif fallback, rounded cards, fine borders, and restrained motion. The brand icon is in `assets/icons/uy-ol-mark.svg`; the site logo and favicon use `logo/logo.png`.
 
 ## Project structure
 
@@ -47,7 +47,7 @@ pages/
   property.html
   valuation.html
 assets/
-  icons/makon-mark.svg
+  icons/uy-ol-mark.svg
   images/property-contact-sheet.jpg
 data/properties.json
 src/

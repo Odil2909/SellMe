@@ -108,7 +108,7 @@ export function mountPropertyMap(element: HTMLElement, listings: MapListing[]) {
     const marker = L.marker(position, { icon: markerIcon(item.category || '', item.price, approximate) }).addTo(map);
     const popup = document.createElement('div');
     const title = document.createElement('strong');
-    title.textContent = item.title || 'Объявление Makon';
+    title.textContent = item.title || 'Объявление uy-ol';
     const address = document.createElement('p');
     address.textContent = [item.city, item.district].filter(Boolean).join(', ');
     popup.append(title, address);

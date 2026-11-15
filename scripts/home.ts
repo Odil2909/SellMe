@@ -48,17 +48,17 @@ export function homePage(properties: Property[]) {
     <div class="category-grid">${categoryData.map(([name,key,img])=>{const count=properties.filter(item=>item.category===key).length;return `<a class="category-tile" href="./pages/catalog.html?category=${encodeURIComponent(key)}">${imageView(img,name)}<span>${name}<small>${offerCount(count)}</small></span></a>`;}).join('')}</div>
   </div></section>
 
-  <section class="section section-tint"><div class="container">${sectionTitle('Объявления владельцев','Найдите свой следующий адрес.','Актуальные объекты, добавленные пользователями Makon.')}
+  <section class="section section-tint"><div class="container">${sectionTitle('Объявления владельцев','Найдите свой следующий адрес.','Актуальные объекты, добавленные пользователями uy-ol.')}
     ${cards.length?`<div class="card-grid">${cards.map(item=>listingCard(item)).join('')}</div>`:`<div class="empty-state"><div class="empty-icon">${icon('home',28)}</div><h3>Пока нет объявлений</h3><p>Разместите первое объявление — оно появится в общем каталоге.</p><a class="btn btn-primary" href="./pages/create-listing.html">Разместить объявление</a></div>`}<div style="text-align:center;margin-top:27px"><a class="btn btn-quiet" href="./pages/catalog.html">Смотреть каталог ${icon('arrow',16)}</a></div>
   </div></section>
 
-  <section class="section"><div class="container"><div class="ai-banner"><div class="ai-banner-copy"><span class="eyebrow">Makon estimate</span><h2>Узнайте, сколько может стоить ваша недвижимость.</h2><p>Ориентировочная стоимость по характеристикам объекта.</p><a class="btn btn-light" href="./pages/valuation.html">Оценить объект ${icon('arrow',16)}</a></div><div class="ai-banner-art">${imageView('assets/images/property-contact-sheet.jpg#tile-4','Фасад современного дома')}</div></div></div></section>
+  <section class="section"><div class="container"><div class="ai-banner"><div class="ai-banner-copy"><span class="eyebrow">uy-ol estimate</span><h2>Узнайте, сколько может стоить ваша недвижимость.</h2><p>Ориентировочная стоимость по характеристикам объекта.</p><a class="btn btn-light" href="./pages/valuation.html">Оценить объект ${icon('arrow',16)}</a></div><div class="ai-banner-art">${imageView('assets/images/property-contact-sheet.jpg#tile-4','Фасад современного дома')}</div></div></div></section>
 
   <section class="section"><div class="container">${sectionTitle('Города Узбекистана','Где бы вы хотели жить?','Выбирайте привычный темп или откройте для себя новый город.')}
     <div class="city-grid">${cities.map(([name,note,img])=>`<a class="city-tile" href="./pages/catalog.html?city=${encodeURIComponent(name)}">${imageView(img,name)}<div><strong>${name}</strong><small>${note}</small></div></a>`).join('')}</div>
   </div></section>
 
-  <section class="section section-tint"><div class="container">${sectionTitle('Почему Makon','Весь путь — в одном месте','Удобные инструменты, чтобы принимать решения с большим спокойствием.')}
+  <section class="section section-tint"><div class="container">${sectionTitle('Почему uy-ol','Весь путь — в одном месте','Удобные инструменты, чтобы принимать решения с большим спокойствием.')}
     <div class="benefit-grid"><article class="benefit"><div class="benefit-icon">${icon('sparkle')}</div><h3>Поиск под ваш ритм</h3><p>Сформулируйте пожелания простыми словами — подбор поможет сузить выбор.</p></article><article class="benefit"><div class="benefit-icon">${icon('chart')}</div><h3>Ориентир по стоимости</h3><p>Получите демонстрационную оценку по ключевым характеристикам объекта.</p></article><article class="benefit"><div class="benefit-icon">${icon('shield')}</div><h3>Детали под рукой</h3><p>Сравнивайте параметры, сохраняйте варианты и возвращайтесь к ним позже.</p></article><article class="benefit"><div class="benefit-icon">${icon('clock')}</div><h3>Меньше лишних шагов</h3><p>Каталог, оценка и публикация объявления собраны в едином пространстве.</p></article></div>
   </div></section>`;
 }

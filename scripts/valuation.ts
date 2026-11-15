@@ -30,7 +30,7 @@ const fieldMarkup = ([name,label,type]) => {
 };
 
 export function valuationPage() {
-  return `<div class="container"><header class="page-heading"><span class="eyebrow">Makon estimate</span><h1>Ориентир для важных решений.</h1><p>Добавьте основные характеристики, чтобы получить предварительный расчёт стоимости.</p></header>
+  return `<div class="container"><header class="page-heading"><span class="eyebrow">uy-ol estimate</span><h1>Ориентир для важных решений.</h1><p>Добавьте основные характеристики, чтобы получить предварительный расчёт стоимости.</p></header>
   <div class="property-detail-layout" style="margin-top:0"><section><form class="form-card" id="valuation-form" novalidate><div class="form-grid">
     <div class="field"><label for="v-category">Тип недвижимости</label><select id="v-category" name="category" required>${categoryOptions.map(x=>`<option value="${x}">${x}</option>`).join('')}</select></div>
     <div class="field"><label for="v-city">Город</label><select id="v-city" name="city" required>${Object.keys(cityRates).map(x=>`<option value="${x}">${x}</option>`).join('')}</select></div>

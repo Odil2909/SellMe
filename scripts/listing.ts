@@ -24,7 +24,7 @@ function contentForStep(step,data) {
 }
 
 export function listingPage() {
-  return `<div class="container"><header class="page-heading"><span class="eyebrow">Разместить на Makon</span><h1>Хороший объект заслуживает внимания.</h1><p>Подготовьте объявление в несколько простых шагов.</p></header><div class="listing-builder" id="listing-builder"></div></div>`;
+  return `<div class="container"><header class="page-heading"><span class="eyebrow">Разместить на uy-ol</span><h1>Хороший объект заслуживает внимания.</h1><p>Подготовьте объявление в несколько простых шагов.</p></header><div class="listing-builder" id="listing-builder"></div></div>`;
 }
 
 export function bindListing() {

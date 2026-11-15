@@ -10,7 +10,7 @@ const cityOptions = ['Ташкент','Самарканд','Бухара','Ан�
 export function catalogPage(properties: Property[]) {
   const params = new URLSearchParams(location.search);
   const cities = [...new Set(properties.map(item => item.city))];
-  return `<div class="container"><header class="page-heading"><span class="eyebrow">Каталог Makon</span><h1>Найдите свой следующий адрес.</h1><p>Объекты по всему Узбекистану — с нужными деталями и без лишнего шума.</p></header>
+  return `<div class="container"><header class="page-heading"><span class="eyebrow">Каталог uy-ol</span><h1>Найдите свой следующий адрес.</h1><p>Объекты по всему Узбекистану — с нужными деталями и без лишнего шума.</p></header>
   <div class="catalog-layout"><aside class="filters-panel"><div class="inline" style="justify-content:space-between"><h3>Фильтры</h3><button class="btn btn-ghost btn-small" type="button" id="clear-filters">Сбросить</button></div>
     <div class="filter-group"><h4>Тип сделки</h4><select class="input" id="filter-deal"><option value="">Любой</option>${['Продажа','Аренда','Посуточно'].map(x=>`<option value="${x}">${x}</option>`).join('')}</select></div>
     <div class="filter-group"><h4>Недвижимость</h4><select class="input" id="filter-category"><option value="">Любой тип</option>${typeOptions.map(x=>`<option value="${x}">${x}</option>`).join('')}</select></div>

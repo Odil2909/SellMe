@@ -211,7 +211,7 @@ async function handleGeocode(request, response, url) {
   search.searchParams.set('limit', '1');
   search.searchParams.set('countrycodes', 'uz');
   const result = await fetch(search, {
-    headers: { 'User-Agent': 'MakonPropertySearch/1.0', 'Accept-Language': 'ru,en' },
+    headers: { 'User-Agent': 'uy-ol-property-search/1.0', 'Accept-Language': 'ru,en' },
     signal: AbortSignal.timeout(8000)
   });
   if (!result.ok) throw Object.assign(new Error(`Сервис поиска адреса ответил с ошибкой (${result.status}).`), { status: 502 });
@@ -315,5 +315,5 @@ const server = createServer(async (request, response) => {
 });
 
 server.listen(port, '0.0.0.0', () => {
-  console.log(`Makon API listening on http://0.0.0.0:${port}`);
+  console.log(`uy-ol API listening on http://0.0.0.0:${port}`);
 });

@@ -41,7 +41,7 @@ export function imageView(src: string, alt: string, className = '') {
 
 export function brand({footer = false}: {footer?: boolean} = {}) {
   const root = document.body.dataset.page === 'home' ? './' : '../';
-  return `<a class="brand ${footer ? 'footer-brand-mark' : ''}" href="${root}index.html" aria-label="Makon — главная"><img src="${brandLogoUrl}" alt=""><span>Makon<em>.</em></span></a>`;
+  return `<a class="brand ${footer ? 'footer-brand-mark' : ''}" href="${root}index.html" aria-label="uy-ol — главная"><img src="${brandLogoUrl}" alt=""><span>uy-ol<em>.</em></span></a>`;
 }
 
 export function header(page: string, locale = 'ru') {
@@ -66,8 +66,8 @@ export function footer() {
   return `<footer class="site-footer"><div class="container"><div class="footer-top"><div>${brand({footer:true})}<p>Помогаем находить место, которое станет вашим. Недвижимость Узбекистана — с вниманием к деталям.</p><div class="tag-row" style="margin-top:18px"><span class="pill">Продажа</span><span class="pill">Аренда</span><span class="pill">Оценка</span></div></div>
     <div class="footer-col"><h4>Платформа</h4><a href="${p}catalog.html">Каталог</a><a href="${p}ai-search.html">Умный подбор</a><a href="${p}valuation.html">Оценка объекта</a><a href="${p}compare.html">Сравнение</a></div>
     <div class="footer-col"><h4>Разместить</h4><a href="${p}create-listing.html">Продать недвижимость</a><a href="${p}create-listing.html">Сдать в аренду</a><a href="${p}profile.html">Личный кабинет</a><a href="${p}favorites.html">Избранное</a></div>
-    <div class="footer-col"><h4>О Makon</h4><a href="mailto:hello@makon.uz">hello@makon.uz</a><a href="tel:+998712000000">+998 71 200 00 00</a><a href="#telegram" data-action="social">Telegram</a><a href="#instagram" data-action="social">Instagram</a><a href="#privacy" data-action="legal">Конфиденциальность</a><a href="#terms" data-action="legal">Условия использования</a></div></div>
-    <div class="footer-bottom"><span>© 2026 Makon. Демонстрационный проект.</span><span>Цены и объявления приведены в учебных целях.</span></div></div></footer>`;
+    <div class="footer-col"><h4>О uy-ol</h4><a href="mailto:drcoding.business@gmail.com">drcoding.business@gmail.com</a><a href="tel:+998712000000">+998 71 200 00 00</a><a href="#telegram" data-action="social">Telegram</a><a href="#instagram" data-action="social">Instagram</a><a href="#privacy" data-action="legal">Конфиденциальность</a><a href="#terms" data-action="legal">Условия использования</a></div></div>
+    <div class="footer-bottom"><span>© 2026 uy-ol. Демонстрационный проект.</span><span>Цены и объявления приведены в учебных целях.</span></div></div></footer>`;
 }
 
 export function toast(message: string) {
