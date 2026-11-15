@@ -3,8 +3,26 @@ import { readStore } from './store';
 
 export async function loadProperties(): Promise<Property[]> {
   const response = await fetch('/api/listings');
-  if (!response.ok) throw new Error(`Не удалось загрузить объявления (${response.status})`);
+  if (!response.ok) {
+    let detail = '';
+    const body = await response.text();
+    if (body) {
+      try {
+        const payload: unknown = JSON.parse(body);
+        if (payload && typeof payload === 'object' && 'error' in payload && typeof payload.error === 'string') {
+          detail = payload.error;
+        }
+      } catch (error) {
+        if (!(error instanceof SyntaxError)) throw error;
+      }
+    }
+    const message = response.status === 404
+      ? 'API каталога не найден. Проверьте настройки Vercel Functions.'
+      : detail || `Сервер каталога временно недоступен (HTTP ${response.status}).`;
+    throw new Error(message);
+  }
   const sharedListings = await response.json() as Property[];
+  if (!Array.isArray(sharedListings)) throw new Error('API каталога вернул неверный формат данных.');
   const sharedIds = new Set(sharedListings.map(listing => listing.id));
   const localListings = readStore<Record<string, string | string[]>[]>('listings', [])
     .filter(listing => !sharedIds.has(String(listing.id || '')))

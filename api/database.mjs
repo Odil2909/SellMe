@@ -4,7 +4,7 @@ let databasePromise;
 
 export async function getDatabase() {
   if (!process.env.DATABASE_URL) {
-    throw Object.assign(new Error('DATABASE_URL не настроен в Vercel.'), { status: 503 });
+    throw Object.assign(new Error('База данных каталога не подключена. Администратору нужно задать DATABASE_URL в Vercel Project Settings → Environment Variables для Production и выполнить redeploy.'), { status: 503 });
   }
   if (!databasePromise) {
     const sql = neon(process.env.DATABASE_URL);
