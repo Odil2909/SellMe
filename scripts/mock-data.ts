@@ -17,7 +17,7 @@ export async function loadProperties(): Promise<Property[]> {
       }
     }
     const message = response.status === 404
-      ? 'API каталога не найден. Проверьте настройки Vercel Functions.'
+      ? 'Сервер каталога не найден. Убедитесь, что запущен Java API.'
       : detail || `Сервер каталога временно недоступен (HTTP ${response.status}).`;
     throw new Error(message);
   }

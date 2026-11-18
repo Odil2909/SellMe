@@ -1,5 +1,9 @@
 /dist/
 /server-data/
+/backend/target/
 /node_modules/
+.env
+.env.*
+!.env.example
 .neon
 .env.local

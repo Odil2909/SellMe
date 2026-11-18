@@ -16,8 +16,10 @@ body { background: var(--canvas); }
 .inline { display:flex; align-items:center; gap:10px; }
 .visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .icon { width:20px; height:20px; flex:none; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
-.btn { min-height:46px; padding:0 18px; border:1px solid transparent; border-radius:12px; display:inline-flex; justify-content:center; align-items:center; gap:9px; font-weight:650; font-size:.9rem; transition:transform .2s ease, box-shadow .2s ease, background .2s ease; }
-.btn:hover { transform:translateY(-1px); }
+.btn { min-height:46px; padding:0 18px; border:1px solid transparent; border-radius:12px; display:inline-flex; justify-content:center; align-items:center; gap:9px; font-weight:650; font-size:.9rem; transition:transform .22s cubic-bezier(.2,.75,.25,1), box-shadow .22s ease, background-color .22s ease, border-color .22s ease, color .22s ease; will-change:transform; }
+.btn:hover:not(:disabled) { transform:translateY(-2px); }
+.btn:active:not(:disabled) { transform:translateY(0) scale(.98); }
+.btn:disabled { cursor:not-allowed; opacity:.58; box-shadow:none; }
 .btn-primary { color:white; background:var(--green); box-shadow:0 7px 16px rgba(8,124,85,.13); }
 .btn-primary:hover { background:var(--green-dark); box-shadow:0 10px 22px rgba(8,124,85,.2); }
 .btn-dark { color:white; background:var(--ink); }
@@ -29,7 +31,7 @@ body { background: var(--canvas); }
 .btn-block { width:100%; }
 .field { display:grid; gap:7px; }
 .field label, .field-label { color:#4c5b51; font-size:.78rem; font-weight:650; }
-.field input, .field select, .field textarea, .input { width:100%; height:48px; padding:0 14px; border:1px solid var(--line); border-radius:11px; outline:none; background:#fff; color:var(--ink); transition:border .15s, box-shadow .15s; }
+.field input, .field select, .field textarea, .input { width:100%; height:48px; padding:0 14px; border:1px solid var(--line); border-radius:11px; outline:none; background:#fff; color:var(--ink); transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease; }
 .field textarea { height:auto; min-height:112px; padding:13px 14px; resize:vertical; }
 .field input:focus, .field select:focus, .field textarea:focus, .input:focus { border-color:#65a88b; box-shadow:0 0 0 3px rgba(8,124,85,.1); }
 .field input::placeholder, .field textarea::placeholder { color:#a3ada6; }

@@ -1,5 +1,6 @@
 import { applyPhoneValidation } from './phone';
 import { toast } from './ui';
+import { hydrateAccountData } from './store';
 
 export function authPage() {
   return `<div class="container"><section class="auth-card">
@@ -10,7 +11,7 @@ export function authPage() {
       <div class="field" id="auth-password-confirm-field" style="margin-top:16px" hidden><label for="auth-password-confirm">Повторите пароль</label><input id="auth-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="8"></div>
       <button class="btn btn-primary btn-block" id="auth-submit" type="submit" style="margin-top:20px">Войти</button>
       <div class="auth-links"><span id="auth-switch-prompt">Впервые на uy-ol?</span> <button type="button" id="auth-switch">Создать аккаунт</button></div>
-      <div class="notice auth-warning">Демонстрационная форма: номер проверяется по формату, но SMS-код и настоящая авторизация не подключены. Не вводите настоящий пароль — он не сохраняется.</div>
+      <div class="notice auth-warning">Данные аккаунта хранятся на сервере проекта. Номер телефона пока не подтверждается SMS-кодом. Используйте пароль, который вы готовы хранить в этом сервисе.</div>
     </form>
   </section></div>`;
 }
@@ -54,6 +55,23 @@ export function bindAuth() {
     event.preventDefault();
     validatePasswords();
     if (!form.reportValidity()) return;
-    toast('Форма готова, но сервис авторизации пока не подключён. Данные не сохранены.');
+    const phoneValue = phone.value;
+    const passwordValue = password.value;
+    submit.disabled = true;
+    fetch('/api/auth', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: registering ? 'register' : 'login', phone: phoneValue, password: passwordValue })
+    }).then(async response => {
+      const result = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(result.error || 'Не удалось войти.');
+      await hydrateAccountData();
+      const next = new URLSearchParams(location.search).get('next');
+      location.href = next === 'create-listing.html' ? './create-listing.html' : './profile.html';
+    }).catch(error => {
+      toast(error instanceof Error ? error.message : 'Не удалось войти. Проверьте подключение к серверу.');
+      submit.disabled = false;
+    });
   });
 }

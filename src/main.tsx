@@ -11,7 +11,7 @@ import { bindProfile, profilePage } from '../scripts/profile';
 import { bindProperty, propertyPage } from '../scripts/property';
 import { loadProperties } from '../scripts/mock-data';
 import { getLocale, installTranslations, setLocale } from '../scripts/i18n';
-import { readStore, toggleId, writeStore } from '../scripts/store';
+import { hydrateAccountData, readStore, toggleId, writeStore } from '../scripts/store';
 import { footer, header, toast } from '../scripts/ui';
 import type { PageName, Property } from '../scripts/types';
 import { bindValuation, valuationPage } from '../scripts/valuation';
@@ -47,7 +47,10 @@ function App() {
 
   useEffect(() => {
     let active = true;
-    loadProperties().then(data => {
+    (async () => {
+      await hydrateAccountData();
+      return loadProperties();
+    })().then(data => {
       if (active) setProperties(data);
     }).catch((cause: unknown) => {
       if (active) setError(cause instanceof Error ? cause.message : String(cause));

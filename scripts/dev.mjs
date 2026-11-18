@@ -1,27 +1,35 @@
+import './load-env.mjs';
 import { spawn } from 'node:child_process';
-import { createServer } from 'node:net';
+import { delimiter, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { resolve } from 'node:path';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const portProbe = createServer();
-const apiPort = await new Promise((resolvePort, reject) => {
-  portProbe.once('error', reject);
-  portProbe.listen(0, '127.0.0.1', () => {
-    const { port } = portProbe.address();
-    portProbe.close(error => error ? reject(error) : resolvePort(port));
+const dockerBinDirectory = '/Applications/Docker.app/Contents/Resources/bin';
+const userDockerBinDirectory = join(process.env.HOME || '', '.docker', 'bin');
+process.env.PATH = [userDockerBinDirectory, dockerBinDirectory, process.env.PATH || ''].filter(Boolean).join(delimiter);
+const dockerCommand = join(dockerBinDirectory, 'docker');
+const databaseUrl = process.env.DATABASE_URL || '';
+const usesDockerPostgres = !databaseUrl || /:5433(?:\/|\?|$)/.test(databaseUrl);
+if (usesDockerPostgres) {
+  await new Promise(resolveCompose => {
+    const compose = spawn(dockerCommand, ['compose', 'up', '-d', 'postgres'], { cwd: root, stdio: 'inherit', env: process.env });
+    compose.once('error', error => { console.error(`PostgreSQL не запущен: ${error.message}`); resolveCompose(); });
+    compose.once('exit', code => {
+      if (code !== 0) console.error('PostgreSQL не запущен. Открой Docker Desktop и повтори npm run dev.');
+      resolveCompose();
+    });
   });
-});
+} else console.log('Using PostgreSQL from DATABASE_URL; Docker PostgreSQL is skipped.');
 const children = [
-  spawn(process.execPath, ['server/index.mjs'], {
+  spawn(process.execPath, ['scripts/run-backend.mjs'], {
     cwd: root,
     stdio: 'inherit',
-    env: { ...process.env, PORT: String(apiPort) }
+    env: { ...process.env, PORT: process.env.PORT || '4178' }
   }),
   spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1'], {
     cwd: root,
     stdio: 'inherit',
-    env: { ...process.env, VITE_API_PROXY_TARGET: `http://127.0.0.1:${apiPort}` }
+    env: { ...process.env, VITE_API_PROXY_TARGET: `http://127.0.0.1:${process.env.PORT || '4178'}` }
   })
 ];
 let shuttingDown = false;
@@ -35,13 +43,15 @@ function stop(exitCode = 0) {
   process.exitCode = exitCode;
 }
 
-children.forEach(child => {
+children.forEach((child, index) => {
   child.on('error', error => {
     console.error(error);
-    stop(1);
+    if (index === 1) stop(1);
   });
   child.on('exit', (code, signal) => {
-    if (!shuttingDown) stop(code || (signal ? 1 : 0));
+    if (shuttingDown) return;
+    if (index === 1) stop(code || (signal ? 1 : 0));
+    else if (code || signal) console.error('Java API stopped; the frontend remains available, but account and listing API calls need PostgreSQL.');
   });
 });
 

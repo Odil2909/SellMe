@@ -18,7 +18,7 @@ function contentForStep(step,data) {
   if(step===4)return `<span class="eyebrow">Шаг 5 из 10</span><h2>Какую цену вы рассматриваете?</h2><p class="muted" style="margin:9px 0 20px">Укажите сумму в долларах США. Это демонстрационное объявление.</p><div class="field" style="max-width:410px"><label>Стоимость, $</label><input name="price" type="number" min="1" required value="${e(data.price)}" placeholder="Например, 120 000"></div>${data.deal!=='Продажа'?'<p class="muted" style="font-size:.78rem;margin-top:10px">Для аренды укажите стоимость за месяц или сутки согласно выбранному типу.</p>':''}`;
   if(step===5)return `<span class="eyebrow">Шаг 6 из 10</span><h2>Покажите объект.</h2><p class="muted" style="margin:9px 0 18px">Добавьте фотографии и видео — первое медиа станет обложкой.</p><label class="upload-zone" for="listing-photos">${icon('camera',26)}<strong>Выберите фотографии или видео</strong><span>PNG, JPG, WebP, GIF · MP4, MOV или WebM до 10 МБ</span><input id="listing-photos" type="file" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/quicktime,video/webm" multiple></label><div class="photo-preview-list" id="listing-photo-names">${(data.photos||[]).map(name=>`<span class="pill pill-neutral">${e(name)}</span>`).join('')}</div><p class="muted" style="font-size:.72rem;margin-top:12px">Видео до 10 МБ каждое; фотографии — до 15 МБ. Медиа появится в каталоге после публикации.</p>`;
   if(step===6)return `<span class="eyebrow">Шаг 7 из 10</span><h2>Расскажите о своём объекте.</h2><div class="field" style="margin-top:22px"><label>Заголовок объявления</label><input name="title" maxlength="80" required value="${e(data.title)}" placeholder="Например, Светлая квартира рядом с парком"></div><div class="field" style="margin-top:16px"><label>Описание</label><textarea name="description" minlength="20" required placeholder="Расскажите о планировке, состоянии, удобствах и важных деталях">${e(data.description)}</textarea><small class="muted">Минимум 20 символов, чтобы покупатели узнали главное.</small></div>`;
-  if(step===7)return `<span class="eyebrow">Шаг 8 из 10</span><h2>Как с вами связаться?</h2><div class="form-grid" style="margin-top:22px"><div class="field"><label>Имя</label><input name="name" required value="${e(data.name)}" placeholder="Ваше имя"></div><div class="field"><label>Номер телефона</label><input name="phone" type="tel" required maxlength="18" value="${e(data.phone)}" placeholder="+998 90 123 45 67"></div></div><div class="notice" style="margin-top:16px">В прототипе контактные данные сохраняются только в локальном браузере.</div>`;
+  if(step===7)return `<span class="eyebrow">Шаг 8 из 10</span><h2>Как с вами связаться?</h2><div class="form-grid" style="margin-top:22px"><div class="field"><label>Имя</label><input name="name" required value="${e(data.name)}" placeholder="Ваше имя"></div><div class="field"><label>Номер телефона</label><input name="phone" type="tel" required maxlength="18" value="${e(data.phone)}" placeholder="+998 90 123 45 67"></div></div><div class="notice" style="margin-top:16px">Контактные данные сохраняются вместе с объявлением и показываются посетителям. Для публикации войдите в аккаунт.</div>`;
   if(step===8)return `<span class="eyebrow">Шаг 9 из 10</span><h2>Проверьте объявление.</h2><p class="muted" style="margin:9px 0 20px">Перед публикацией можно вернуться на любой предыдущий шаг.</p><article class="listing-preview"><div class="listing-preview-photo">${icon('home',34)}</div><div class="listing-preview-body"><span class="pill">${e(data.deal)} · ${e(data.category)}</span><h3>${e(data.title||'Заголовок объявления')}</h3><p class="muted">${e(data.city)}, ${e(data.district)} · ${e(data.area)} м²${data.rooms?` · ${e(data.rooms)} комн.`:''}</p><strong>${money(data.price)}</strong><p class="muted">${e(data.description)}</p><div class="tag-row">${data.photos?.length?data.photos.map(name=>`<span class="pill pill-neutral">${e(name)}</span>`).join(''):'<span class="pill pill-neutral">Фото не добавлены</span>'}</div><hr class="divider"><p><b>${e(data.name)}</b> · ${e(data.phone)}</p></div></article>`;
   return `<div class="publish-success"><div class="empty-icon">${icon('check',30)}</div><span class="eyebrow">Шаг 10 из 10</span><h2>Объявление размещено.</h2><p class="muted">Объявление опубликовано и появится в общем каталоге.</p><a class="btn btn-primary" href="./catalog.html" style="margin-top:20px">Открыть каталог</a><button class="btn btn-quiet" style="margin:20px 0 0 8px" id="new-listing">Создать ещё одно</button></div>`;
 }
@@ -83,19 +83,16 @@ export function bindListing() {
         const button=document.getElementById('listing-next') as HTMLButtonElement;
         button.disabled=true;
         try{
+          const authResponse=await fetch('/api/auth',{credentials:'same-origin'});
+          const authState=await authResponse.json() as {user?:{id:string}|null};
+          if(!authResponse.ok||!authState.user){toast('Войдите в аккаунт, чтобы продолжить публикацию.');location.href='./login.html?next=create-listing.html';return;}
           let response: Response;
-          if(__VERCEL__){
-            const extensions:Record<string,string>={'image/png':'.png','image/jpeg':'.jpg','image/webp':'.webp','image/gif':'.gif','video/mp4':'.mp4','video/quicktime':'.mov','video/webm':'.webm'};
-            const {upload}=await import('@vercel/blob/client');
-            const uploads=await Promise.all(mediaFiles.map(file=>upload(`listing-media/${crypto.randomUUID()}${extensions[file.type]}`,file,{access:'public',handleUploadUrl:'/api/upload-token'})));
-            response=await fetch('/api/listings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,photos:uploads.map(file=>file.url)})});
-          }else{
-            const payload=new FormData();
-            payload.append('listing',JSON.stringify(data));
-            mediaFiles.forEach(file=>payload.append('media',file,file.name));
-            response=await fetch('/api/listings',{method:'POST',body:payload});
-          }
+          const payload=new FormData();
+          payload.append('listing',JSON.stringify(data));
+          mediaFiles.forEach(file=>payload.append('media',file,file.name));
+          response=await fetch('/api/listings',{method:'POST',body:payload});
           const result=await response.json() as {id?:string;date?:string;photos?:string[];error?:string};
+          if(response.status===401){toast(result.error||'Войдите в аккаунт, чтобы опубликовать объявление.');location.href='./login.html?next=create-listing.html';return;}
           if(!response.ok){toast(result.error||'Не удалось опубликовать объявление.');button.disabled=false;return;}
           const previous=readStore<Record<string,unknown>[]>('listings',[]);
           if(!writeStore('listings',[{...data,id:result.id,date:result.date,photos:result.photos||[],status:'Новое объявление'},...previous])){

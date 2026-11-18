@@ -1,124 +1,58 @@
-# uy-ol — недвижимость по-новому
+# uy-ol
 
-Premium green real estate marketplace for Uzbekistan. The frontend is built with React, TypeScript, and CSS. Local development uses a built-in Node.js API; Vercel deployments use Vercel Functions, Neon Postgres, and Vercel Blob.
+Marketplace for buying and renting property in Uzbekistan. The frontend uses React, TypeScript, and Vite. The API is Java 25 (LTS) with Spring Boot and PostgreSQL.
 
 ## Start locally
 
-Install dependencies and start the Vite frontend and local API:
+Requirements: Node.js 22, Java 25+, and Docker Desktop (or a PostgreSQL 16+ instance). If Maven is not installed, the development scripts download Maven 3.9.9 into the ignored `node_modules/.cache` folder; Maven then downloads the Java dependencies.
 
 ```bash
 npm install
+cp .env.example .env
 npm run dev
 ```
 
-Create and run a production build with `npm run build` and `npm start`. Local server commands require Node.js 20 or newer. Set `PORT` to change the listening port and `DATA_DIR` to place local listing data and uploads on a mounted disk.
+`npm run dev` starts the Docker PostgreSQL container automatically when `DATABASE_URL` is unset or points to port 5433. When `DATABASE_URL` points to another database, the API uses that database and skips the container. Open <http://127.0.0.1:5100>. Vite serves the website and proxies `/api` and `/uploads` to the Java service on port 4178. Docker PostgreSQL is exposed locally on port 5433; its data is kept in the `uyol-postgres-data` volume. Uploaded listing media is stored under `server-data/uploads`.
 
-## Deploy to Vercel
+If PostgreSQL is hosted elsewhere, set `DATABASE_URL` in `.env` to its `postgres://` or `postgresql://` connection string. The Java API creates the required tables when it starts. Set `COOKIE_SECURE=true` when serving the API through HTTPS. `PORT` changes the API port, and `DATA_DIR` changes the local media directory.
 
-`vercel.json` configures the Vite build and `dist` output. The `api/` directory contains Vercel Functions, so `/api/listings`, `/api/geocode`, and `/api/upload-token` work on both the default Vercel URL and a custom domain.
+## Build and run
 
-Before deploying:
+```bash
+npm run build
+npm start
+```
 
-1. Enable Vercel system environment variables; the build uses `VERCEL=1` to select the serverless upload flow.
-2. Connect a Neon project to Vercel and set `DATABASE_URL` for Production, Preview, and Development. Use the pooled connection string for serverless requests.
-3. Create and connect a **public** Vercel Blob store. Add `BLOB_READ_WRITE_TOKEN` to the project so the upload-token function can authorize direct browser uploads. The token must have read/write access.
-4. Deploy or redeploy. The listings table is created automatically on the first API request; its schema is also documented in `db/migrations/001_create_listings.sql`.
+`npm run build` builds the frontend and packages the Spring Boot API at `backend/target/uyol-api-1.0.0.jar`. `npm start` runs the API; serve the generated `dist/` folder from a web server that proxies `/api` and `/uploads` to the Java service.
 
-The local Vite development server continues to use the JSON-file API in `server/`; Vercel production uses Neon and Blob. Listing submission remains anonymous, as before.
+## Architecture
 
-## Brand
+```text
+Browser
+  └── Vite frontend (React + TypeScript, port 5100)
+        ├── /api/auth          registration, login, session
+        ├── /api/user-data     account profile and saved preferences
+        ├── /api/listings      listing catalog and multipart media upload
+        ├── /api/geocode       OpenStreetMap Nominatim address lookup
+        └── /uploads           listing photos and videos
+                 └── Spring Boot API (Java, port 4178)
+                       └── PostgreSQL
+```
 
-The product brand is **uy-ol**.
-
-The visual system uses uy-ol green (`#087C55`), dark green (`#075B40`), soft green surfaces, Inter with a sans-serif fallback, rounded cards, fine borders, and restrained motion. The brand icon is in `assets/icons/uy-ol-mark.svg`; the site logo and favicon use `logo/logo.png`.
+Java 25 source is in `backend/src/main/java/com/uyol/backend`. The database schema is in `backend/src/main/resources/schema.sql`. PostgreSQL keeps listing JSON, accounts, hashed sessions, and user data. Password hashing remains compatible with existing scrypt hashes. The frontend keeps its existing pages and communicates through the same `/api/*` paths.
 
 ## Project structure
 
 ```text
-index.html
-pages/
-  ai-search.html
-  catalog.html
-  compare.html
-  create-listing.html
-  favorites.html
-  login.html
-  profile.html
-  property.html
-  valuation.html
-assets/
-  icons/uy-ol-mark.svg
-  images/property-contact-sheet.jpg
-data/properties.json
-src/
-  main.tsx
-scripts/
-  ai-search.ts
-  auth.ts
-  catalog.ts
-  comparison.ts
-  dev.mjs
-  favorites.ts
-  home.ts
-  icons.ts
-  listing.ts
-  maps.ts
-  mock-data.ts
-  phone.ts
-  profile.ts
-  property.ts
-  store.ts
-  types.ts
-  ui.ts
-  valuation.ts
-api/
-  database.mjs
-  geocode.mjs
-  listings.mjs
-  upload-token.mjs
-server/
-  index.mjs
-  listing-validation.mjs
-db/
-  migrations/001_create_listings.sql
-vercel.json
-logo/logo.png
-package.json
-tsconfig.json
-vite.config.ts
-styles/
-  components.css
-  global.css
-  main.css
-  pages.css
-  reset.css
-  typography.css
-  variables.css
+backend/       Spring Boot API and PostgreSQL schema
+db/migrations/ Previous PostgreSQL schema steps kept for reference
+scripts/       Vite + Java development and build launchers
+src/           React application entry points
+scripts/*.ts   Page logic and UI behavior
+pages/         Catalog, listing, account, and property pages
+styles/        Shared styles and page layouts
+assets/        Brand marks and property imagery
+docker-compose.yml  Local PostgreSQL service
 ```
 
-## Implemented
-
-- Responsive home page, shared header/footer, mobile menu, category and city discovery.
-- The catalog starts empty; newly published listings are shared through the Node API.
-- Catalog search, deal/category/city/district/price/area/room/condition/floor filters, verification filter, sorting, grid/list/map views, and empty states.
-- Map markers use property-type icons; listings without coordinates are spread around the city center and explicitly labeled approximate, while listings with coordinates use their selected location.
-- Property detail pages selected with `?id=mak-001`, photo gallery/lightbox, features, contact actions, and similar listings.
-- Favorites and up-to-four-object comparison saved in local storage.
-- Property valuation form with category-dependent fields, illustrative range, comparables, history, and an explicit demo-only disclosure.
-- Rule-based natural-language property matching for type, city, deal, budget, room count, and district. Commute preferences are collected but are not calculated.
-- Ten-step listing form with per-step validation, draft saving, photo/video previews, and shared publication.
-- Demo personal cabinet with profile, listing, favorite, valuation, collection, messages, and settings sections.
-- Phone format validation, local profile photo upload/URL, Uzbek/Russian/English interface controls, and address lookup/map pin selection for listing submissions.
-- Toast messages, loading shimmer styles, reduced-motion support, and responsive layouts.
-
-## Demo data and images
-
-`data/properties.json` is empty and no sample listings are preloaded. During local development, visitor-submitted listings and media are stored in the ignored `server-data/` directory. On Vercel, listings are stored in Neon and media in Vercel Blob. The optimized local image sheet is an original generated visual with 24 different property scenes; cards and galleries crop individual cells with CSS.
-
-Favorites, comparison, valuation history, profile, settings, and listing drafts use browser `localStorage`. Up to 10 media files can be attached to a listing; each video is limited to 10 MB and each photo to 15 MB.
-
-Address lookup is requested explicitly by the listing author and sends the entered address to OpenStreetMap's Nominatim service. Map tiles are provided by OpenStreetMap. AI search, valuation, messages, and legal links remain front-end demonstrations. User sign-in/authentication is not connected; publishing is currently anonymous and rate-limited.
-
-## React + TypeScript
-
-The existing page URLs and styles are retained; React mounts each page and TypeScript handles the app logic. The `data/properties.json` seed is empty so demo property cards do not appear in the catalog.
+The catalog starts empty. Accounts use an Uzbekistan phone number and password; SMS verification and password recovery are not connected. Publishing requires an account. Listing photos are limited to 15 MB, videos to 10 MB, and up to 10 media files can be attached. Geocoding sends the entered address to OpenStreetMap Nominatim. AI search, valuation, and messaging remain frontend demonstrations.
