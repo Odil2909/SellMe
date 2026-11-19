@@ -1,5 +1,6 @@
 /dist/
 /server-data/
+/checkpoints/*.zip
 /backend/target/
 /node_modules/
 .env
@@ -7,3 +8,4 @@
 !.env.example
 .neon
 .env.local
+.DS_Store

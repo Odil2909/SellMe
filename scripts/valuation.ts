@@ -1,7 +1,7 @@
 import { icon } from './icons';
 import { escapeHtml, money } from './ui';
 import { readStore, writeStore } from './store';
-import type { Property } from './types';
+import type { ListingDraft, Property } from './types';
 
 const categoryFields = {
   'Квартира': [['rooms','Количество комнат','number','1'],['floor','Этаж','number','2'],['floors','Этажность дома','number','5'],['renovation','Ремонт','select','']],
@@ -67,8 +67,26 @@ export function bindValuation(properties: Property[]) {
     const matches=useSet.slice(0,3);
     const record={...data,estimate,min,max,createdAt:new Date().toISOString()};
     const history=readStore('valuations',[]); writeStore('valuations',[record,...history].slice(0,10));
-    document.getElementById('valuation-result')!.innerHTML=`<article class="surface-card"><div class="inline" style="justify-content:space-between"><span class="pill">Демонстрационный расчёт</span>${icon('trend',20)}</div><p class="muted" style="margin-top:20px">Предварительный ориентир</p><h2 style="font-size:2.65rem;color:var(--green);margin:5px 0">${money(estimate)}</h2><p class="muted">Диапазон: ${money(min)} – ${money(max)}</p><hr class="divider"><div class="detail-feature-grid"><div class="detail-feature">${icon('area')} ${size} м²</div><div class="detail-feature">${icon('chart')} ≈ ${money(Math.round(estimate/size))} / м²</div><div class="detail-feature">${icon('pin')} ${escapeHtml(data.city)}, ${escapeHtml(data.district)}</div></div><p style="margin:20px 0 9px;font-weight:700">${matches.length?'Похожие объявления':'Как получился ориентир'}</p><p class="muted" style="font-size:.83rem">Расчёт использовал ${useSet.length} демонстрационных объектов категории «${escapeHtml(data.category)}»${cityComparable.length?` в городе ${escapeHtml(data.city)}`:', в разных городах'} и поправку на состояние. Ваши параметры и адрес могут заметно изменить цену.</p>${matches.length?`<div class="tag-row" style="margin-top:13px">${matches.map(item=>`<span class="pill pill-neutral">${escapeHtml(item.city)} · ${item.area} м² · ${money(item.price)}</span>`).join('')}</div>`:''}<div class="notice" style="margin-top:18px">Предварительная демонстрационная оценка. Для определения реальной рыночной стоимости необходимы актуальные данные рынка и проверка характеристик объекта.</div><button class="btn btn-quiet" type="button" style="margin-top:17px" id="retry-valuation">${icon('back',16)} Повторить оценку</button></article>`;
-    document.getElementById('retry-valuation').addEventListener('click',()=>{document.getElementById('valuation-result').innerHTML='';form.scrollIntoView({behavior:'smooth',block:'center'});});
+    document.getElementById('valuation-result')!.innerHTML=`<article class="surface-card valuation-result-card"><div class="inline valuation-result-heading"><span class="pill">Демонстрационный расчёт</span>${icon('trend',20)}</div><div class="valuation-price-row"><div class="valuation-price-copy"><p class="muted">Предварительный ориентир</p><h2>${money(estimate)}</h2><p class="muted">Диапазон: ${money(min)} – ${money(max)}</p></div><button class="btn btn-primary valuation-list-action" type="button" id="valuation-list-for-sale">${icon('home',18)} <span>Выставить на продажу</span>${icon('arrow',17)}</button></div><hr class="divider"><div class="detail-feature-grid"><div class="detail-feature">${icon('area')} ${size} м²</div><div class="detail-feature">${icon('chart')} ≈ ${money(Math.round(estimate/size))} / м²</div><div class="detail-feature">${icon('pin')} ${escapeHtml(data.city)}, ${escapeHtml(data.district)}</div></div><p style="margin:20px 0 9px;font-weight:700">${matches.length?'Похожие объявления':'Как получился ориентир'}</p><p class="muted" style="font-size:.83rem">Расчёт использовал ${useSet.length} демонстрационных объектов категории «${escapeHtml(data.category)}»${cityComparable.length?` в городе ${escapeHtml(data.city)}`:', в разных городах'} и поправку на состояние. Ваши параметры и адрес могут заметно изменить цену.</p>${matches.length?`<div class="tag-row" style="margin-top:13px">${matches.map(item=>`<span class="pill pill-neutral">${escapeHtml(item.city)} · ${item.area} м² · ${money(item.price)}</span>`).join('')}</div>`:''}<div class="notice" style="margin-top:18px">Предварительная демонстрационная оценка. Для определения реальной рыночной стоимости необходимы актуальные данные рынка и проверка характеристик объекта.</div><button class="btn btn-quiet" type="button" style="margin-top:17px" id="retry-valuation">${icon('back',16)} Повторить оценку</button></article>`;
+    const result=document.getElementById('valuation-result')!;
+    document.getElementById('retry-valuation').addEventListener('click',()=>{result.innerHTML='';form.scrollIntoView({behavior:'smooth',block:'center'});});
+    document.getElementById('valuation-list-for-sale')!.addEventListener('click',()=>{
+      const listingCategories=new Set(['Квартира','Дом','Земля','Гараж','Коммерция','Офис','Склад']);
+      const supported=listingCategories.has(data.category);
+      const title=`Продажа: ${data.category} в ${data.city} — ${size} м²`.slice(0,80);
+      const draft:ListingDraft={
+        deal:'Продажа',category:supported?data.category:'',city:data.city,district:data.district,
+        address:data.address||'',area:String(size),rooms:data.rooms||'',floor:data.floor||'',
+        floors:data.floors||data.stories||'',condition:data.condition||'Хорошее состояние',
+        price:String(estimate),photos:[],title,
+        description:`Предварительный ориентир uy-ol — ${money(estimate)}. Состояние: ${data.condition||'не указано'}. Подробности уточнит владелец.`,
+        name:'',phone:''
+      };
+      if(data.plot)draft.plot=data.plot;
+      writeStore('listingDraft',draft);
+      writeStore('listingStep',supported?2:1);
+      location.href='./create-listing.html';
+    });
     document.getElementById('valuation-result').scrollIntoView({behavior:'smooth',block:'start'});
   });
 }

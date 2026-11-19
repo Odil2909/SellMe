@@ -1,0 +1,157 @@
+:root[data-theme="dark"] body {
+  color:var(--ink);
+  background-color:#3d5056;
+  background-image:radial-gradient(ellipse 86% 34% at 50% 0%,rgba(197,216,217,.19),transparent 100%),linear-gradient(180deg,#5b6d73 0%,#506269 43%,#40545a 76%,#34484e 100%);
+  background-attachment:fixed;
+}
+:root[data-theme="dark"] ::selection { color:#f5fff8; background:#28694e; }
+:root[data-theme="dark"] .site-header { background:rgba(89,107,113,.96); border-color:rgba(219,230,229,.13); }
+:root[data-theme="dark"] .main-nav,
+:root[data-theme="dark"] .lang-switch { color:#c4cec7; }
+:root[data-theme="dark"] .icon-button,
+:root[data-theme="dark"] .language-switch,
+:root[data-theme="dark"] .mobile-nav { background:var(--surface); color:var(--ink); }
+:root[data-theme="dark"] .mobile-nav a { color:#cbd5ce; }
+:root[data-theme="dark"] .mobile-nav a:hover { background:var(--green-pale); color:var(--green); }
+:root[data-theme="dark"] .count-badge { color:#fff; border-color:var(--surface); }
+:root[data-theme="dark"] .property-card,
+:root[data-theme="dark"] .search-box,
+:root[data-theme="dark"] .form-card,
+:root[data-theme="dark"] .surface-card,
+:root[data-theme="dark"] .filters-panel,
+:root[data-theme="dark"] .contact-card,
+:root[data-theme="dark"] .compare-table-wrap,
+:root[data-theme="dark"] .dashboard-nav,
+:root[data-theme="dark"] .metric-card,
+:root[data-theme="dark"] .empty-state,
+:root[data-theme="dark"] .chat-shell,
+:root[data-theme="dark"] .hero-float,
+:root[data-theme="dark"] .benefit,
+:root[data-theme="dark"] .prompt-chip,
+:root[data-theme="dark"] .map-pin,
+:root[data-theme="dark"] .view-switch button.active { background:var(--surface); color:var(--ink); border-color:var(--line); }
+:root[data-theme="dark"] .property-card { border-color:var(--line); }
+:root[data-theme="dark"] .property-photo,
+:root[data-theme="dark"] .property-photo video,
+:root[data-theme="dark"] .property-image-placeholder,
+:root[data-theme="dark"] .listing-photo-thumb video { background:#222d26; }
+:root[data-theme="dark"] .favorite-btn { background:rgba(34,45,38,.94); color:#d1dbd4; }
+:root[data-theme="dark"] .property-bottom,
+:root[data-theme="dark"] .filter-group { border-color:var(--line); }
+:root[data-theme="dark"] .compare-table th { background:#222d26; }
+:root[data-theme="dark"] .property-type,
+:root[data-theme="dark"] .property-meta,
+:root[data-theme="dark"] .filter-check,
+:root[data-theme="dark"] .detail-feature,
+:root[data-theme="dark"] .compare-table th,
+:root[data-theme="dark"] .view-switch button,
+:root[data-theme="dark"] .message-thread small { color:var(--muted); }
+:root[data-theme="dark"] .compare-toggle,
+:root[data-theme="dark"] .view-switch { background:#222d26; color:#d0d9d2; border-color:var(--line); }
+:root[data-theme="dark"] .compare-toggle.active,
+:root[data-theme="dark"] .chat-sidebar button.active,
+:root[data-theme="dark"] .dashboard-nav a.active { background:var(--green-soft); color:#8be1b6; border-color:#315943; }
+:root[data-theme="dark"] .section-tint { background:transparent; }
+:root[data-theme="dark"] .hero { background:transparent; }
+:root[data-theme="dark"] .hero-map-card { --hero-map-bg:#17231c; --hero-map-park:#20372a; --hero-map-block:#202e26; --hero-map-building:#2c3b31; --hero-map-window:#3a5442; --hero-map-road-edge:#34443a; --hero-map-road:#26352b; --hero-map-road-mark:rgba(165,189,169,.23); --hero-map-park-dot:#426a4b; border-color:rgba(118,153,126,.2); }
+:root[data-theme="dark"] .hero-map-home-marker { color:#7bd8ac; background:rgba(28,41,33,.96); border-color:rgba(131,195,151,.22); }
+:root[data-theme="dark"] .hero-map-home-marker.is-featured { color:white; background:#087c55; border-color:rgba(68,189,137,.28); }
+:root[data-theme="dark"] .hero-map-city-tag,
+:root[data-theme="dark"] .hero-map-legend { color:#dce8df; background:rgba(27,36,31,.94); border-color:rgba(118,153,126,.2); }
+:root[data-theme="dark"] .hero-kicker,
+:root[data-theme="dark"] .hero-float.rating .avatar,
+:root[data-theme="dark"] .contact-avatar,
+:root[data-theme="dark"] .listing-row-icon { background:#233e2e; color:#83d9ac; }
+:root[data-theme="dark"] .hero-copy > p,
+:root[data-theme="dark"] .page-heading p,
+:root[data-theme="dark"] .section-head p,
+:root[data-theme="dark"] .message-thread p { color:var(--muted); }
+:root[data-theme="dark"] .category-tile,
+:root[data-theme="dark"] .city-tile { background-color:#27352c; }
+:root[data-theme="dark"] .map-preview { background-color:#1a261e; background-image:linear-gradient(28deg,transparent 47%,#2b3b30 48%,#2b3b30 49%,transparent 50%),linear-gradient(103deg,transparent 47%,#2b3b30 48%,#2b3b30 49%,transparent 50%),linear-gradient(5deg,transparent 47%,#344437 48%,#344437 49%,transparent 50%); }
+:root[data-theme="dark"] .map-canvas,
+:root[data-theme="dark"] .location-picker-map { background:#1a261e; }
+:root[data-theme="dark"] .leaflet-tile-pane { filter:brightness(.72) saturate(.72); }
+:root[data-theme="dark"] .leaflet-popup-content-wrapper,
+:root[data-theme="dark"] .leaflet-popup-tip,
+:root[data-theme="dark"] .leaflet-bar a,
+:root[data-theme="dark"] .leaflet-control-layers { background:#202a24; color:var(--ink); border-color:var(--line); }
+:root[data-theme="dark"] .leaflet-bar a { border-bottom-color:var(--line); }
+:root[data-theme="dark"] .coordinate-fields input[readonly],
+:root[data-theme="dark"] .chat-sidebar,
+:root[data-theme="dark"] .chat-message.assistant,
+:root[data-theme="dark"] .listing-preview,
+:root[data-theme="dark"] .listing-preview-photo,
+:root[data-theme="dark"] .upload-zone { background:#202a24; color:var(--ink); }
+:root[data-theme="dark"] .chat-sidebar button,
+:root[data-theme="dark"] .dashboard-nav a,
+:root[data-theme="dark"] .choice-card,
+:root[data-theme="dark"] .step-dots,
+:root[data-theme="dark"] .message-thread small { color:#c0cbc3; }
+:root[data-theme="dark"] .choice-card:hover,
+:root[data-theme="dark"] .choice-card.selected { background:#1c3427; border-color:#4c8b68; }
+:root[data-theme="dark"] .upload-zone { border-color:#4d765e; }
+:root[data-theme="dark"] .listing-photo-thumb { background:var(--surface); }
+:root[data-theme="dark"] .notice { background:#1b2d22; border-color:#304936; color:#b5c9bb; }
+:root[data-theme="dark"] .pill-neutral { background:#2a353d; color:#d0d9d2; }
+:root[data-theme="dark"] .progress-track { background:#2b3730; }
+:root[data-theme="dark"] .field label,
+:root[data-theme="dark"] .field-label { color:#c4cec7; }
+:root[data-theme="dark"] .field input,
+:root[data-theme="dark"] .field select,
+:root[data-theme="dark"] .field textarea,
+:root[data-theme="dark"] .input { background:#151d18; color:var(--ink); border-color:var(--line); }
+:root[data-theme="dark"] .field input::placeholder,
+:root[data-theme="dark"] .field textarea::placeholder { color:#829087; }
+:root[data-theme="dark"] .field input:focus,
+:root[data-theme="dark"] .field select:focus,
+:root[data-theme="dark"] .field textarea:focus,
+:root[data-theme="dark"] .input:focus { border-color:#4baf7d; box-shadow:0 0 0 3px rgba(68,189,137,.15); }
+:root[data-theme="dark"] .pill { color:#9be5bd; }
+:root[data-theme="dark"] .btn-quiet:hover { background:#26322b; }
+:root[data-theme="dark"] .btn-primary { background:#087c55; }
+:root[data-theme="dark"] .btn-primary:hover { background:#066b49; }
+:root[data-theme="dark"] .btn-dark { background:#2a3830; color:var(--ink); }
+:root[data-theme="dark"] .btn-light { color:#174b37; background:#eef7f1; }
+:root[data-theme="dark"] .toast { background:#26342c; color:var(--ink); }
+:root[data-theme="dark"] .property-map-marker { background:#087c55; }
+:root[data-theme="dark"] .empty-state { border-color:#3a5141; }
+:root[data-theme="dark"] .empty-icon { background:#233e2e; }
+:root[data-theme="dark"] .skeleton { background:linear-gradient(90deg,#202a24 25%,#29362e 38%,#202a24 65%); background-size:400% 100%; }
+:root[data-theme="dark"] .skeleton-cards i { background:linear-gradient(90deg,#202a24 25%,#29362e 38%,#202a24 65%); background-size:400% 100%; }
+:root[data-theme="dark"] .property-card a:focus-visible,
+:root[data-theme="dark"] .btn:focus-visible,
+:root[data-theme="dark"] .icon-button:focus-visible,
+:root[data-theme="dark"] button:focus-visible { outline-color:rgba(103,221,163,.6); }
+:root[data-theme="dark"] .theme-toggle .icon { transition:transform .25s ease; }
+:root[data-theme="dark"] .theme-toggle:hover .icon { transform:rotate(-12deg); }
+
+:root[data-theme="dark"] .site-footer { background:#1a2528; border-top:1px solid rgba(196,213,214,.1); }
+:root[data-theme="dark"] body[data-page="home"] .hero { padding-top:54px; padding-bottom:56px; }
+:root[data-theme="dark"] body[data-page="home"] .section { background:transparent; }
+:root[data-theme="dark"] body[data-page="home"] .section > .container { padding:38px clamp(22px,3.5vw,46px); border:1px solid rgba(192,210,211,.1); border-radius:13px; background:#1b2528; box-shadow:0 18px 42px rgba(11,20,23,.1); }
+:root[data-theme="dark"] body[data-page="home"] .section-head h2 { font-family:Manrope,var(--font); font-size:clamp(1.8rem,3vw,2.55rem); font-weight:500; letter-spacing:-.045em; text-transform:uppercase; }
+:root[data-theme="dark"] body[data-page="home"] .hero-search .search-box { border-color:rgba(195,213,211,.12); background:#1b2528; box-shadow:0 20px 50px rgba(8,16,19,.2); }
+:root[data-theme="dark"] body[data-page="home"] .ai-banner { background:#202b2e; border:1px solid rgba(195,213,211,.12); border-radius:13px; }
+:root[data-theme="dark"] body[data-page="home"] .ai-banner-art::before { background:linear-gradient(90deg,#202b2e 0%,rgba(32,43,46,.08) 90%); }
+:root[data-theme="dark"] .surface-card,
+:root[data-theme="dark"] .form-card,
+:root[data-theme="dark"] .search-box,
+:root[data-theme="dark"] .filters-panel,
+:root[data-theme="dark"] .contact-card,
+:root[data-theme="dark"] .metric-card,
+:root[data-theme="dark"] .dashboard-nav,
+:root[data-theme="dark"] .chat-shell,
+:root[data-theme="dark"] .compare-table-wrap,
+:root[data-theme="dark"] .empty-state { border-radius:13px; }
+:root[data-theme="dark"] .property-card { border-radius:12px; }
+:root[data-theme="dark"] .category-tile,
+:root[data-theme="dark"] .city-tile { border-radius:10px; }
+:root[data-theme="dark"] .btn { border-radius:8px; }
+:root[data-theme="dark"] .icon-button { border-radius:9px; }
+:root[data-theme="dark"] .hero-map-card { border-radius:24px 112px 24px 24px; }
+
+@media (max-width:760px) {
+  :root[data-theme="dark"] body[data-page="home"] .section > .container { padding:25px 19px; }
+  :root[data-theme="dark"] body[data-page="home"] .hero { padding-top:35px; padding-bottom:42px; }
+}

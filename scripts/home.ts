@@ -24,16 +24,14 @@ const offerCount = count => {
   if(last>=2&&last<=4&&(lastTwo<12||lastTwo>14))return `${count} объявления`;
   return `${count} объявлений`;
 };
-
 export function homePage(properties: Property[]) {
-  const hero = properties[0];
   const cityCount = new Set(properties.map(item => item.city)).size;
   const cards = properties.slice(0, 6);
   return `<section class="hero"><div class="container"><div class="hero-layout">
     <div class="hero-copy"><span class="hero-kicker">${icon('sparkle',15)} Недвижимость с умным подходом</span><h1>Найдите место,<br>которое станет <span>вашим.</span></h1><p>Покупайте, продавайте и арендуйте. Оценивайте недвижимость и находите свой вариант по-настоящему удобно.</p>
     <div class="hero-stats"><div class="hero-stat"><strong>${properties.length}</strong><small>объявлений в каталоге</small></div><div class="hero-stat"><strong>${cityCount} городов</strong><small>по всему Узбекистану</small></div><div class="hero-stat"><strong>Ваш выбор</strong><small>без лишней суеты</small></div></div>
-    </div><div class="hero-media"><div class="hero-main-image">${hero?imageView(hero.photos?.[0]||'',hero.title):`<div class="property-image-placeholder">${icon('home',54)}<span>Здесь появятся объявления владельцев</span></div>`}<div class="hero-image-shade"></div>${hero?`<div class="hero-caption"><strong>${escapeHtml(hero.title)}</strong><span>${escapeHtml(hero.city)}, ${escapeHtml(hero.district)} · ${hero.area} м²</span></div>`:''}</div>
-      <div class="hero-float rating"><div class="avatar">${icon('shield',19)}</div><div><b>Подбор с заботой</b><small>Объявления владельцев</small></div></div><div class="hero-float insight"><small>Местоположение</small><strong>На интерактивной карте</strong><small>для каждого объявления</small></div>
+    </div><div class="hero-media"><div class="hero-main-image hero-photo-card">${imageView('assets/images/uyol-background.jpeg','Современный дом в горах','hero-background-photo')}<div class="hero-image-shade"></div></div>
+      <div class="hero-float rating"><div class="avatar">${icon('shield',19)}</div><div><b>Подбор с заботой</b><small>Объявления владельцев</small></div></div><div class="hero-float insight"><small>В каталоге</small><strong>${properties.length}</strong><small>объявлений по Узбекистану</small></div>
     </div></div>
     <div class="hero-search"><form class="search-box" id="home-search"><div class="search-tabs" role="tablist"><button type="button" class="search-tab active" data-deal="Продажа">Купить</button><button type="button" class="search-tab" data-deal="Аренда">Арендовать</button><button type="button" class="search-tab" data-deal="Посуточно">Посуточно</button></div><input type="hidden" name="deal" value="Продажа"><div class="search-fields">
       <div class="field search-field-icon"><label for="home-city">Город</label>${icon('pin',16)}<input id="home-city" name="city" placeholder="Например, Ташкент" list="city-options"><datalist id="city-options">${['Ташкент','Самарканд','Бухара','Андижан','Наманган','Фергана','Нукус'].map(city=>`<option value="${city}">${city}</option>`).join('')}</datalist></div>

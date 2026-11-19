@@ -48,17 +48,26 @@ export function header(page: string, locale = 'ru') {
   const homePrefix = page === 'home' ? './' : '../';
   const p = page === 'home' ? './pages/' : './';
   const favCount = readStore('favorites', []).length;
-  const navLinks = [
-    ['catalog', 'Каталог', `${p}catalog.html`],
-    ['valuation', 'Оценить', `${p}valuation.html`],
-    ['ai-search', 'AI-подбор', `${p}ai-search.html`]
+  const drawerLinks = [
+    ['home', 'Главная', `${homePrefix}index.html`, 'home'],
+    ['catalog', 'Каталог', `${p}catalog.html`, 'building'],
+    ['buy', 'Купить', `${p}catalog.html?deal=Продажа`, 'search'],
+    ['rent', 'Арендовать', `${p}catalog.html?deal=Аренда`, 'clock'],
+    ['valuation', 'Оценить недвижимость', `${p}valuation.html`, 'chart'],
+    ['ai-search', 'AI-подбор', `${p}ai-search.html`, 'sparkle'],
+    ['favorites', 'Избранное', `${p}favorites.html`, 'heart'],
+    ['compare', 'Сравнение', `${p}compare.html`, 'compare'],
+    ['profile', 'Личный кабинет', `${p}profile.html`, 'user'],
+    ['login', 'Войти', `${p}login.html`, 'user']
   ];
-  const links = navLinks.map(([key, label, href]) => `<a class="${page === key ? 'active' : ''}" href="${href}">${label}</a>`).join('');
+  const links = drawerLinks.map(([key,label,href,ico]) => `<a class="menu-link ${page===key?'active':''}" href="${href}" data-action="menu-link" ${page===key?'aria-current="page"':''}><span class="menu-link-icon">${icon(ico,18)}</span><span>${label}</span>${icon('arrow',15,'menu-link-arrow')}</a>`).join('');
+  const languages = [['uz','UZ'],['ru','RU'],['en','EN']].map(([key,label])=>`<button type="button" data-action="language" data-locale="${key}" aria-pressed="${locale===key}" class="${locale===key?'active':''}">${label}</button>`).join('');
+  const dark = document.documentElement.dataset.theme==='dark';
   return `<header class="site-header"><div class="container header-inner">
+    <button class="icon-button menu-toggle" type="button" data-action="menu" aria-controls="site-menu" aria-expanded="false" aria-label="Открыть меню">${icon('menu')}</button>
     ${brand()}
-    <nav class="main-nav" aria-label="Основная навигация"><a class="${page === 'home' ? 'active' : ''}" href="${homePrefix}index.html">Главная</a>${links}<a href="${p}catalog.html?deal=Продажа">Купить</a><a href="${p}catalog.html?deal=Аренда">Арендовать</a></nav>
-    <div class="header-actions"><div class="language-switch" role="group" aria-label="Язык сайта">${[['uz','UZ'],['ru','RU'],['en','EN']].map(([key,label])=>`<button type="button" data-action="language" data-locale="${key}" aria-pressed="${locale===key}" class="${locale===key?'active':''}">${label}</button>`).join('')}</div><a class="icon-button" href="${p}favorites.html" aria-label="Избранное">${icon('heart')}<span class="count-badge" data-count="favorites">${favCount}</span></a><a class="icon-button compare-header" href="${p}compare.html" aria-label="Сравнить объекты">${icon('compare')}<span class="count-badge" data-count="compare">${readStore('compare', []).length}</span></a><a class="icon-button profile-header" href="${p}profile.html" aria-label="Личный кабинет">${icon('user')}</a><a class="btn btn-quiet btn-small auth-header-link" href="${p}login.html">Войти</a><a class="btn btn-primary btn-small" href="${p}create-listing.html">Разместить</a><button class="icon-button menu-toggle" type="button" data-action="menu" aria-label="Открыть меню">${icon('menu')}</button></div>
-  </div><nav class="mobile-nav" id="mobile-nav"><div class="mobile-language language-switch" role="group" aria-label="Язык сайта">${[['uz','UZ'],['ru','RU'],['en','EN']].map(([key,label])=>`<button type="button" data-action="language" data-locale="${key}" aria-pressed="${locale===key}" class="${locale===key?'active':''}">${label}</button>`).join('')}</div><a href="${homePrefix}index.html">Главная</a><a href="${p}catalog.html">Каталог недвижимости</a><a href="${p}catalog.html?deal=Продажа">Купить</a><a href="${p}catalog.html?deal=Аренда">Арендовать</a><a href="${p}valuation.html">Оценить недвижимость</a><a href="${p}ai-search.html">AI-подбор</a><a href="${p}favorites.html">Избранное</a><a href="${p}compare.html">Сравнение</a><a href="${p}profile.html">Личный кабинет</a><a href="${p}login.html">Войти</a><a href="${p}create-listing.html">Разместить объявление</a></nav></header>`;
+    <div class="header-actions"><div class="language-switch" role="group" aria-label="Язык сайта">${languages}</div><button class="icon-button theme-toggle" type="button" data-action="theme-toggle" aria-label="${dark?'Включить светлую тему':'Включить тёмную тему'}" aria-pressed="${dark}" title="${dark?'Светлая тема':'Тёмная тема'}">${icon(dark?'sun':'moon',18)}</button><a class="icon-button" href="${p}favorites.html" aria-label="Избранное">${icon('heart')}<span class="count-badge" data-count="favorites">${favCount}</span></a><a class="icon-button compare-header" href="${p}compare.html" aria-label="Сравнить объекты">${icon('compare')}<span class="count-badge" data-count="compare">${readStore('compare', []).length}</span></a><a class="icon-button profile-header" href="${p}profile.html" aria-label="Личный кабинет">${icon('user')}</a><a class="btn btn-quiet btn-small auth-header-link" href="${p}login.html">Войти</a><a class="btn btn-primary btn-small header-listing-link" href="${p}create-listing.html">Разместить</a></div>
+  </div></header><button class="menu-backdrop" type="button" data-action="menu-close" aria-label="Закрыть меню" tabindex="-1"></button><aside class="mobile-nav" id="site-menu" role="dialog" aria-modal="true" aria-label="Меню uy-ol" aria-hidden="true" inert><div class="menu-panel-head">${brand()}<button class="icon-button menu-close" type="button" data-action="menu-close" aria-label="Закрыть меню">${icon('close')}</button></div><div class="mobile-language language-switch" role="group" aria-label="Язык сайта">${languages}</div><nav class="menu-links" aria-label="Основная навигация">${links}</nav><a class="btn btn-primary menu-listing-link" href="${p}create-listing.html" data-action="menu-link">${icon('plus',17)} Разместить объявление</a><div class="menu-panel-foot"><span>uy-ol</span><span>Недвижимость Узбекистана</span></div></aside>`;
 }
 
 export function footer() {
@@ -66,7 +75,7 @@ export function footer() {
   return `<footer class="site-footer"><div class="container"><div class="footer-top"><div>${brand({footer:true})}<p>Помогаем находить место, которое станет вашим. Недвижимость Узбекистана — с вниманием к деталям.</p><div class="tag-row" style="margin-top:18px"><span class="pill">Продажа</span><span class="pill">Аренда</span><span class="pill">Оценка</span></div></div>
     <div class="footer-col"><h4>Платформа</h4><a href="${p}catalog.html">Каталог</a><a href="${p}ai-search.html">Умный подбор</a><a href="${p}valuation.html">Оценка объекта</a><a href="${p}compare.html">Сравнение</a></div>
     <div class="footer-col"><h4>Разместить</h4><a href="${p}create-listing.html">Продать недвижимость</a><a href="${p}create-listing.html">Сдать в аренду</a><a href="${p}profile.html">Личный кабинет</a><a href="${p}favorites.html">Избранное</a></div>
-    <div class="footer-col"><h4>О uy-ol</h4><a href="mailto:drcoding.business@gmail.com">drcoding.business@gmail.com</a><a href="tel:+998950881760">+998 95 088 1760</a><a href="https://t.me/Ez1dKid" target="_blank" rel="noopener noreferrer">Telegram: @Ez1dKid</a><a href="https://instagram.com/gofurovicc.a" target="_blank" rel="noopener noreferrer">Instagram: gofurovicc.a</a><a href="https://telegra.ph/POLITIKA-KONFIDENCIALNOSTI-11-16-75" target="_blank" rel="noopener noreferrer">Конфиденциальность</a><a href="https://telegra.ph/POLZOVATELSKOE-SOGLASHENIE-11-16-36" target="_blank" rel="noopener noreferrer">Условия использования</a></div></div>
+    <div class="footer-col"><h4>О uy-ol</h4><a href="mailto:drcoding.business@gmail.com">drcoding.business@gmail.com</a><a href="tel:+998950881760">+998 95 088 1760</a><a href="https://t.me/Ez1dKid" target="_blank" rel="noopener noreferrer">Telegram: @Ez1dKid</a><a href="https://t.me/Bredlyban2" target="_blank" rel="noopener noreferrer">Telegram: @Bredlyban2</a><a href="https://instagram.com/gofurovicc.a" target="_blank" rel="noopener noreferrer">Instagram: gofurovicc.a</a><a href="https://telegra.ph/POLITIKA-KONFIDENCIALNOSTI-11-16-75" target="_blank" rel="noopener noreferrer">Конфиденциальность</a><a href="https://telegra.ph/POLZOVATELSKOE-SOGLASHENIE-11-16-36" target="_blank" rel="noopener noreferrer">Условия использования</a></div></div>
     <div class="footer-bottom"><span>© 2026 uy-ol. Демонстрационный проект.</span><span>Цены и объявления приведены в учебных целях.</span></div></div></footer>`;
 }
 

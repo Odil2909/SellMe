@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class ListingController {
+  private static final Logger log=LoggerFactory.getLogger(ListingController.class);
   private static final Set<String> DEALS=Set.of("Продажа","Аренда","Посуточно");
   private static final Set<String> CATEGORIES=Set.of("Квартира","Дом","Земля","Гараж","Коммерция","Офис","Склад");
   private static final ConcurrentHashMap<String,Window> SUBMISSIONS=new ConcurrentHashMap<>();
@@ -44,6 +47,7 @@ public class ListingController {
       if(media!=null)for(MultipartFile file:media){if(file.isEmpty())continue;String ext=validExtension(file);if(ext.isBlank())throw new ApiException(415,"Поддерживаются только PNG, JPG, WebP, GIF, MP4, MOV и WebM.");long max=Set.of(".mp4",".mov",".webm").contains(ext)?10L*1024*1024:15L*1024*1024;if(file.getSize()>max)throw new ApiException(413,ext.startsWith(".mp")||ext.equals(".mov")||ext.equals(".webm")?"Размер каждого видео не должен превышать 10 МБ.":"Размер фотографии не должен превышать 15 МБ.");String name=UUID.randomUUID()+ext;Path target=uploads.resolve(name);file.transferTo(target);stored.add(target);photos.add("/uploads/"+name);}
       UUID id=UUID.randomUUID();var result=new java.util.LinkedHashMap<String,Object>(listing);result.put("id",id.toString());result.put("currency","USD");result.put("features",java.util.List.of());result.put("photos",photos);result.put("date",LocalDate.now().toString());result.put("status","Новое объявление");result.put("contact",Map.of("name",listing.get("name"),"role","Собственник","phone",listing.get("phone")));result.remove("name");result.remove("phone");
       db.update("INSERT INTO makon_listings(id,data,owner_user_id) VALUES(?,?::jsonb,?)",id,json.writeValueAsString(result),UUID.fromString(owner.get("id").toString()));
+      log.info("Новое объявление добавлено в каталог.");
       return ResponseEntity.status(201).cacheControl(CacheControl.noStore()).body(result);
     }catch(ApiException e){delete(stored);throw e;}catch(Exception e){delete(stored);throw new ApiException(500,"Не удалось опубликовать объявление.");}
   }

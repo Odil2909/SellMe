@@ -23,10 +23,14 @@ const paths: Record<string, string> = {
   sparkles: '<path d="m12 3 1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3Z"></path><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L15 18l2.2-.8L19 15Z"></path>',
   message: '<path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 4a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.4Z"></path>',
   building: '<rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 8h2m4 0h2M8 12h2m4 0h2M8 16h2m4 0h2M11 21v-3h3v3"></path>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect>',
+  list: '<path d="M9 6h12M9 12h12M9 18h12"></path><circle cx="4" cy="6" r=".8"></circle><circle cx="4" cy="12" r=".8"></circle><circle cx="4" cy="18" r=".8"></circle>',
   star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path>',
   back: '<path d="m15 18-6-6 6-6"></path>',
   trash: '<path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6"></path>',
   trend: '<path d="m3 17 6-6 4 4 8-9"></path><path d="M15 6h6v6"></path>',
+  moon: '<path d="M20.9 13A8.5 8.5 0 0 1 11 3.1 8.6 8.6 0 1 0 20.9 13Z"></path>',
+  sun: '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path>',
   wand: '<path d="m15 4 5 5M4 20l11-11M5 5l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2Zm12 10 1.4 2.6L21 19l-2.6 1.4L17 23l-1.4-2.6L13 19l2.6-1.4L17 15Z"></path>'
 };
 

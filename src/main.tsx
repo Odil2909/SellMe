@@ -15,6 +15,8 @@ import { hydrateAccountData, readStore, toggleId, writeStore } from '../scripts/
 import { footer, header, toast } from '../scripts/ui';
 import type { PageName, Property } from '../scripts/types';
 import { bindValuation, valuationPage } from '../scripts/valuation';
+import { toggleTheme } from '../scripts/theme';
+import { mountSupportWidget } from '../scripts/support-widget';
 
 const loadingMarkup = '<div class="container page-skeleton" aria-label="Загрузка страницы"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-copy"></div><div class="skeleton skeleton-panel"></div><div class="skeleton skeleton-cards"><i></i><i></i><i></i></div></div>';
 
@@ -44,6 +46,8 @@ function App() {
     () => properties ? pageMarkup(page, properties) : loadingMarkup,
     [page, properties],
   );
+
+  useEffect(() => mountSupportWidget(), []);
 
   useEffect(() => {
     let active = true;
@@ -94,20 +98,54 @@ function App() {
       });
     };
 
+    const menu = document.getElementById('site-menu');
+    const menuToggle = document.querySelector<HTMLButtonElement>('[data-action="menu"]');
+    const setMenuOpen = (open: boolean) => {
+      if (!menu || !menuToggle) return;
+      menu.classList.toggle('open', open);
+      document.querySelector('.menu-backdrop')?.classList.toggle('open', open);
+      menu.setAttribute('aria-hidden', String(!open));
+      menu.inert = !open;
+      menuToggle.setAttribute('aria-expanded', String(open));
+      menuToggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+      document.documentElement.classList.toggle('menu-open', open);
+      if (open) menu.querySelector<HTMLElement>('.menu-close')?.focus();
+      else menuToggle.focus();
+    };
+
+    const handleMenuKeydown = (event: KeyboardEvent) => {
+      if (!menu?.classList.contains('open')) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setMenuOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = [...menu.querySelectorAll<HTMLElement>('a[href],button:not([disabled])')]
+        .filter(element => element.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !menu.contains(document.activeElement))) {
+        event.preventDefault(); last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !menu.contains(document.activeElement))) {
+        event.preventDefault(); first.focus();
+      }
+    };
+
     const handleClick = (event: MouseEvent) => {
       if (!(event.target instanceof Element)) return;
       const action = event.target.closest<HTMLElement>('[data-action]');
       if (!action) return;
       const kind = action.dataset.action;
 
-      if (kind === 'menu') {
-        const menu = document.getElementById('mobile-nav');
-        if (!menu) return;
-        const open = menu.classList.toggle('open');
-        action.setAttribute('aria-expanded', String(open));
-        action.innerHTML = open
-          ? '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>'
-          : '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>';
+      if (kind === 'theme-toggle') {
+        toggleTheme();
+      } else if (kind === 'menu') {
+        setMenuOpen(!menu?.classList.contains('open'));
+      } else if (kind === 'menu-close') {
+        setMenuOpen(false);
+      } else if (kind === 'menu-link') {
+        setMenuOpen(false);
       } else if (kind === 'language') {
         const locale = action.dataset.locale;
         if (locale === 'uz' || locale === 'ru' || locale === 'en') {
@@ -165,10 +203,13 @@ function App() {
     };
 
     document.addEventListener('click', handleClick);
+    document.addEventListener('keydown', handleMenuKeydown);
     return () => {
+      document.documentElement.classList.remove('menu-open');
       observer?.disconnect();
       stopTranslations();
       document.removeEventListener('click', handleClick);
+      document.removeEventListener('keydown', handleMenuKeydown);
     };
   }, [page, properties]);
 

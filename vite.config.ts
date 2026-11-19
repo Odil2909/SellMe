@@ -27,7 +27,14 @@ export default defineConfig({
         profile: resolve(projectRoot, 'pages/profile.html'),
         login: resolve(projectRoot, 'pages/login.html'),
         createListing: resolve(projectRoot, 'pages/create-listing.html'),
-        valuation: resolve(projectRoot, 'pages/valuation.html')
+        valuation: resolve(projectRoot, 'pages/valuation.html'),
+        operatorSupport: resolve(projectRoot, 'pages/operator-support.html')
+      },
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'map-vendor': ['leaflet']
+        }
       }
     }
   }
